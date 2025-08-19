@@ -13,74 +13,115 @@ export function HomeHero() {
     };
 
     return (
-        <div className="overflow-hidden">
-            <section className="bg-gradient-to-br  h-screen from-blue-600 via-blue-700 to-indigo-800 text-white py-24 md:py-32 ">
+        <div className="overflow-hidden relative">
+            <section className="bg-gradient-to-br from-[#1a2d57] via-[#2c4a8a] to-[#3a63b8] text-white py-24 md:py-32 pt-32">
                 <div className="absolute inset-0 overflow-hidden">
-                    <div className="absolute top-0 left-0 w-64 h-64 bg-blue-500 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob"></div>
-                    <div className="absolute top-0 right-0 w-64 h-64 bg-indigo-500 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob animation-delay-2000"></div>
-                    <div className="absolute bottom-0 left-1/2 w-64 h-64 bg-sky-500 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob animation-delay-4000"></div>
+                    <div className="absolute top-10 left-10% w-72 h-72 bg-blue-400/30 rounded-full mix-blend-soft-light filter blur-[70px] animate-pulse"></div>
+                    <div className="absolute top-1/3 right-15% w-96 h-96 bg-indigo-500/20 rounded-full mix-blend-soft-light filter blur-[80px] animate-pulse animation-delay-2000"></div>
+                    <div className="absolute bottom-20 left-1/3 w-80 h-80 bg-sky-400/25 rounded-full mix-blend-soft-light filter blur-[90px] animate-pulse animation-delay-4000"></div>
+
+                    <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI2MCIgaGVpZ2h0PSI2MCI+PHBhdGggZD0iTTAgMGg2MHY2MEgweiIgZmlsbD0ibm9uZSIvPjxwYXRoIGQ9Ik02MCAwSDBWNk0wIDBoNjAiIHN0cm9rZT0icmdiYSgyNTUsMjU1LDI1NSwwLjA1KSIgc3Ryb2tlLXdpZHRoPSIxIi8+PC9zdmc+')] opacity-20"></div>
                 </div>
 
-                <div className="container mx-auto px-4 flex flex-col md:flex-row items-center relative z-10">
+                <div className="container mx-auto px-4 relative z-10">
                     <motion.div
-                        className="md:w-1/2 mb-12 md:mb-0"
+                        className="max-w-2xl mx-auto text-center"
                         initial="hidden"
                         animate={inView ? "visible" : "hidden"}
                         variants={fadeIn}
                         transition={{ duration: 0.8 }}
                         ref={ref}
                     >
-                        <h1 className="text-4xl md:text-6xl font-bold mb-6 leading-tight">
-                            Reuniting Lost Items <span className="text-blue-200">With Their Owners</span>
-                        </h1>
-                        <p className="text-xl md:text-2xl mb-8 text-blue-100 max-w-lg">
-                            Our platform connects people who've lost items with those who've found them.
-                            Join thousands of users in our mission to return what's lost.
-                        </p>
+                        <motion.h1
+                            className="text-5xl md:text-7xl font-bold mb-6 leading-tight bg-clip-text text-transparent bg-gradient-to-r from-white to-blue-100"
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ delay: 0.2, duration: 0.8 }}
+                        >
+                            Find What You <span className="text-blue-200">Lost</span>
+                        </motion.h1>
 
+                        <motion.p
+                            className="text-xl md:text-2xl mb-8 text-blue-100 max-w-2xl mx-auto leading-relaxed"
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ delay: 0.4, duration: 0.8 }}
+                        >
+                            Our intelligent platform helps reunite lost items with their owners through advanced matching technology.
+                        </motion.p>
 
-                        <div className="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4">
+                        <motion.div
+                            className="mb-8 max-w-xl mx-auto relative"
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ delay: 0.6, duration: 0.8 }}
+                        >
+                            <div className="relative">
+                                <motion.div
+                                    whileHover={{ scale: 1.01 }}
+                                    transition={{ duration: 0.2 }}
+                                >
+                                    <input
+                                        type="text"
+                                        placeholder="Search for your lost item..."
+                                        className="w-full px-6 py-4 rounded-2xl border-2 bg-white/5 backdrop-blur-sm border-white/20 focus:border-blue-400/50 focus:outline-none shadow-2xl text-white placeholder-blue-200/70 font-medium"
+                                    />
+                                </motion.div>
+                                <button className="absolute right-2 top-1/2 -translate-y-1/2 bg-blue-500 hover:bg-blue-400 p-2 rounded-xl transition-colors">
+                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                                    </svg>
+                                </button>
+                            </div>
+                        </motion.div>
+
+                        <motion.div
+                            className="flex flex-col sm:flex-row gap-4 justify-center mt-12"
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ delay: 0.8, duration: 0.8 }}
+                        >
                             <motion.button
-                                className="bg-red-500 hover:bg-red-600 px-8 py-4 rounded-xl font-semibold text-lg transition-all transform hover:scale-105 shadow-lg"
-                                whileHover={{ scale: 1.05 }}
-                                whileTap={{ scale: 0.95 }}
+                                className="bg-white text-[#2c4a8a] hover:bg-blue-50 px-8 py-3.5 rounded-xl font-semibold text-md transition-all shadow-lg hover:shadow-xl flex items-center justify-center gap-2"
+                                whileHover={{ scale: 1.05, boxShadow: "0 10px 25px -5px rgba(255,255,255,0.2)" }}
+                                whileTap={{ scale: 0.98 }}
                             >
-                                Report Lost Item
-                            </motion.button>
-                            <motion.button
-                                className="bg-white text-blue-700 hover:bg-blue-50 px-8 py-4 rounded-xl font-semibold text-lg transition-all transform hover:scale-105 shadow-lg"
-                                whileHover={{ scale: 1.05 }}
-                                whileTap={{ scale: 0.95 }}
-                            >
+                                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                                </svg>
                                 Browse Found Items
                             </motion.button>
-                        </div>
-                    </motion.div>
-
-                    <motion.div
-                        className="md:w-1/2 flex justify-center"
-                        initial={{ opacity: 0, x: 50 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        transition={{ duration: 0.8, delay: 0.2 }}
-                    >
-                        <div className="relative">
-                            <img
-                                src="/HomeHero.png"
-                                alt="Lost items"
-                                className="max-w-md w-full rounded-2xl shadow-2xl border-4 border-white/20 transform rotate-1"
-                            />
-                            <motion.div
-                                className="absolute -bottom-6 -right-6 bg-white p-4 rounded-xl shadow-lg"
-                                initial={{ scale: 0 }}
-                                animate={{ scale: 1 }}
-                                transition={{ delay: 0.6 }}
+                            <motion.button
+                                className="bg-transparent border-2 border-white/40 text-white hover:bg-white/10 px-8 py-3.5 rounded-xl font-semibold text-md transition-all shadow-lg hover:shadow-xl flex items-center justify-center gap-2"
+                                whileHover={{ scale: 1.05, boxShadow: "0 10px 25px -5px rgba(255,255,255,0.1)" }}
+                                whileTap={{ scale: 0.98 }}
                             >
-                                <div className="text-blue-800 font-bold text-sm">95% Success Rate</div>
-                                <div className="text-green-600 text-xs">Items reunited daily</div>
-                            </motion.div>
-                        </div>
+                                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+                                </svg>
+                                Report Lost Item
+                            </motion.button>
+                        </motion.div>
+
+                        <motion.div
+                            className="mt-16 text-blue-200/60 text-sm flex items-center justify-center gap-6"
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            transition={{ delay: 1.2, duration: 0.8 }}
+                        >
+                            <div className="flex items-center gap-2">
+                                <div className="w-2 h-2 bg-blue-400 rounded-full animate-pulse"></div>
+                                <span>1,235+ items found today</span>
+                            </div>
+                            <div className="flex items-center gap-2">
+                                <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
+                                <span>89% recovery rate</span>
+                            </div>
+                        </motion.div>
                     </motion.div>
                 </div>
+
+                <div className="absolute bottom-0 left-0 w-full h-32 bg-gradient-to-t from-[#1a2d57] to-transparent"></div>
             </section>
         </div>
     );
