@@ -16,11 +16,11 @@ export function HomeHero() {
         <div className="overflow-hidden relative">
             <section className="bg-gradient-to-br from-[#1a2d57] via-[#2c4a8a] to-[#3a63b8] text-white py-24 md:py-32 pt-32">
                 <div className="absolute inset-0 overflow-hidden">
-                    <div className="absolute top-10 left-10% w-72 h-72 bg-blue-400/30 rounded-full mix-blend-soft-light filter blur-[70px] animate-pulse"></div>
-                    <div className="absolute top-1/3 right-15% w-96 h-96 bg-indigo-500/20 rounded-full mix-blend-soft-light filter blur-[80px] animate-pulse animation-delay-2000"></div>
-                    <div className="absolute bottom-20 left-1/3 w-80 h-80 bg-sky-400/25 rounded-full mix-blend-soft-light filter blur-[90px] animate-pulse animation-delay-4000"></div>
+                    <div className="absolute top-0 left-0 w-full h-72 "></div>
+                    <div className="absolute -top-24 -right-24 w-96 h-96 bg-blue-400/10 rounded-full"></div>
+                    <div className="absolute bottom-10 left-10 w-80 h-80 bg-purple-400/10 rounded-full"></div>
 
-                    <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI2MCIgaGVpZ2h0PSI2MCI+PHBhdGggZD0iTTAgMGg2MHY2MEgweiIgZmlsbD0ibm9uZSIvPjxwYXRoIGQ9Ik02MCAwSDBWNk0wIDBoNjAiIHN0cm9rZT0icmdiYSgyNTUsMjU1LDI1NSwwLjA1KSIgc3Ryb2tlLXdpZHRoPSIxIi8+PC9zdmc+')] opacity-20"></div>
+                    {/*<div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI2MCIgaGVpZ2h0PSI2MCI+PHBhdGggZD0iTTAgMGg2MHY2MEgweiIgZmlsbD0ibm9uZSIvPjxwYXRoIGQ9Ik02MCAwSDBWNk0wIDBoNjAiIHN0cm9rZT0icmdiYSgyNTUsMjU1LDI1NSwwLjA1KSIgc3Ryb2tlLXdpZHRoPSIxIi8+PC9zdmc+')] opacity-20"></div>*/}
                 </div>
 
                 <div className="container mx-auto px-4 relative z-10">
