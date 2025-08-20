@@ -4,6 +4,8 @@ import { HowItWorks } from "./HomeHero/HowItWork.tsx";
 import { StatsSection } from "./HomeHero/StatsSection.tsx";
 import { RecentItems } from "./HomeHero/RecentItemsSelection.tsx";
 import { TopPerformer } from "./HomeHero/TopPerformer.tsx";
+import { AboutUs } from "./AboutUs/AboutUs.tsx";
+import Footer from "./Footer/Footer.tsx";
 function MainSection() {
   return (
     <div className="w-full">
@@ -13,6 +15,8 @@ function MainSection() {
       <StatsSection />
       <RecentItems/>
       <TopPerformer/>
+      <AboutUs/>
+      <Footer/>
     </div>
   );
 }
