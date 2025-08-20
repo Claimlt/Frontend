@@ -67,13 +67,16 @@ function SignupForm({ isOpen, onClose }: SignupFormProps) {
 
     return (
         <AnimatePresence>
-            <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
+            <div
+                className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-black/60"
+                style={{ top: 0, left: 0, width: "100vw", height: "100vh" }}
+            >
                 <motion.div
                     initial={{ opacity: 0, scale: 0.9 }}
                     animate={{ opacity: 1, scale: 1 }}
                     exit={{ opacity: 0, scale: 0.9 }}
                     transition={{ type: "spring", damping: 20 }}
-                    className="relative w-full max-w-md max-h-[90vh] overflow-y-auto"
+                    className="relative w-full mt-10 max-w-md max-h-[90vh] overflow-y-auto"
                 >
                     <div className="bg-white rounded-2xl shadow-2xl overflow-hidden">
                         <div className="p-1 bg-gradient-to-r from-blue-500 to-purple-500">
