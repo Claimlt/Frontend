@@ -6,16 +6,31 @@ import { RecentItems } from "./HomeHero/RecentItemsSelection.tsx";
 import { TopPerformer } from "./HomeHero/TopPerformer.tsx";
 import { AboutUs } from "./AboutUs/AboutUs.tsx";
 import Footer from "./Footer/Footer.tsx";
+
 function MainSection() {
   return (
     <div className="w-full">
       <Navbar />
-      <HomeHero />
-      <HowItWorks />
+      <section id="home">
+        <HomeHero />
+      </section>
+
+      <section id="how-it-works">
+        <HowItWorks />
+      </section>
+
       <StatsSection />
-      <RecentItems/>
+
+      <section id="items">
+        <RecentItems/>
+      </section>
+
       <TopPerformer/>
-      <AboutUs/>
+
+      <section id="contact">
+        <AboutUs/>
+      </section>
+
       <Footer/>
     </div>
   );
