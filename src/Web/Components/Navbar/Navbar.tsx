@@ -2,9 +2,11 @@ import { motion } from "framer-motion";
 // @ts-ignore
 import { HashLink } from "react-router-hash-link";
 import { useEffect, useState } from "react";
+import SignupForm from "../Forms/SignupForm.tsx";
 
 export function Navbar() {
   const [scrolled, setScrolled] = useState(false);
+  const [isSignupOpen, setIsSignupOpen] = useState(false);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -18,6 +20,7 @@ export function Navbar() {
 
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
+
 
   return (
     <nav
@@ -76,6 +79,7 @@ export function Navbar() {
             Login
           </motion.button>
           <motion.button
+              onClick={() => setIsSignupOpen(true)}
             className="px-5 py-2 rounded-xl font-medium bg-white text-[#386196] hover:bg-blue-50 transition-all duration-200 shadow-sm"
             whileHover={{
               scale: 1.03,
@@ -87,6 +91,10 @@ export function Navbar() {
           </motion.button>
         </div>
       </div>
+      <SignupForm
+          isOpen={isSignupOpen}
+          onClose={() => setIsSignupOpen(false)}
+      />
     </nav>
   );
 }
