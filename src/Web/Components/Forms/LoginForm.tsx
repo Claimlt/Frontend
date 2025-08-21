@@ -33,35 +33,35 @@ function LoginForm({ isOpen, onClose, onSwitchToSignup }: LoginFormProps) {
     };
 
 
-  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    const validationResult = validateLoginForm(formData);
+    const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
+        const validationResult = validateLoginForm(formData);
 
-    if (validationResult.isValid) {
-        setIsLoading(true);
-        try {
-            const response = await axios.post("http://127.0.0.1:8000/api/login", formData);
-            
-            localStorage.setItem('token', response.data.token);
-            localStorage.setItem('user', JSON.stringify(response.data.user));
-            
-            console.log("Login successful, user role:", response.data.user.role);
-            onClose();
-        
-        } catch (error: any) {
-            console.error("Login error:", error);
-            if (error.response?.data?.message) {
-                setErrors({ password: error.response.data.message });
-            } else {
-                setErrors({ password: "Login failed. Please try again." });
+        if (validationResult.isValid) {
+            setIsLoading(true);
+            try {
+                const response = await axios.post("http://127.0.0.1:8000/api/login", formData);
+
+                localStorage.setItem('token', response.data.token);
+                localStorage.setItem('user', JSON.stringify(response.data.user));
+
+                console.log("Login successful, user role:", response.data.user.role);
+                onClose();
+
+            } catch (error: any) {
+                console.error("Login error:", error);
+                if (error.response?.data?.message) {
+                    setErrors({ password: error.response.data.message });
+                } else {
+                    setErrors({ password: "Login failed. Please try again." });
+                }
+            } finally {
+                setIsLoading(false);
             }
-        } finally {
-            setIsLoading(false);
+        } else {
+            setErrors(validationResult.errors);
         }
-    } else {
-        setErrors(validationResult.errors);
-    }
-};
+    };
 
     const handleSocialLogin = (provider: string) => {
         console.log(`Logging in with ${provider}`);
