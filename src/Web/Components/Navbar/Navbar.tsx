@@ -2,7 +2,7 @@ import { motion } from "framer-motion";
 // @ts-ignore
 import { HashLink } from "react-router-hash-link";
 import { useEffect, useState } from "react";
-import SignupForm from "../Forms/SignupForm.tsx";
+import {SignupForm} from "../Forms/SignupForm.tsx";
 import LoginForm from "../Forms/LoginForm.tsx";
 
 export function Navbar() {
