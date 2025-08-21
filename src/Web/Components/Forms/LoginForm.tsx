@@ -2,7 +2,8 @@ import { type ChangeEvent, type FormEvent, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import type { LoginFormProps } from "../../../../Utils/Registration.ts";
 import { validateLoginForm } from "../../../../Utils/validateForm.tsx";
-import axios from "axios";
+import { useAuth } from "../../../Context/Authcontext.tsx";
+
 
 function LoginForm({ isOpen, onClose, onSwitchToSignup }: LoginFormProps) {
     const [formData, setFormData] = useState({
@@ -14,8 +15,8 @@ function LoginForm({ isOpen, onClose, onSwitchToSignup }: LoginFormProps) {
     const [errors, setErrors] = useState<{ email?: string; password?: string }>({});
     const [showPassword, setShowPassword] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
-    const [role, setRole] = useState(false);
-
+    
+    const { login } = useAuth(); 
 
     const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
         const { name, value, type, checked } = e.target;
@@ -32,7 +33,6 @@ function LoginForm({ isOpen, onClose, onSwitchToSignup }: LoginFormProps) {
         }
     };
 
-
     const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         const validationResult = validateLoginForm(formData);
@@ -40,17 +40,12 @@ function LoginForm({ isOpen, onClose, onSwitchToSignup }: LoginFormProps) {
         if (validationResult.isValid) {
             setIsLoading(true);
             try {
-                const response = await axios.post("http://127.0.0.1:8000/api/login", formData);
-
-                localStorage.setItem('token', response.data.token);
-                localStorage.setItem('user', JSON.stringify(response.data.user));
-
-                console.log("Login successful, user role:", response.data.user.role);
+                await login(formData.email, formData.password);
+                console.log("Login successful");
                 onClose();
-
             } catch (error: any) {
                 console.error("Login error:", error);
-                if (error.response?.data?.message) {
+              if (error.response?.data?.message) {
                     setErrors({ password: error.response.data.message });
                 } else {
                     setErrors({ password: "Login failed. Please try again." });
@@ -62,6 +57,7 @@ function LoginForm({ isOpen, onClose, onSwitchToSignup }: LoginFormProps) {
             setErrors(validationResult.errors);
         }
     };
+
 
     const handleSocialLogin = (provider: string) => {
         console.log(`Logging in with ${provider}`);

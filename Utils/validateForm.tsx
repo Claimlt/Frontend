@@ -54,6 +54,8 @@ export const validateLoginForm = (formData: {
     }
 
     return {
+        password: formData.password,
+        email: formData.email,
         isValid: Object.keys(errors).length === 0,
         errors
     };
