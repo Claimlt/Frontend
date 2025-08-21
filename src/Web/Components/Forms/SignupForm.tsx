@@ -1,10 +1,14 @@
 import { type ChangeEvent, type FormEvent, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import type { FormErrors, SignupFormProps, FormData } from "../../../../Utils/Registration.ts";
+import type { FormData, FormErrors, SignupFormProps } from "../../../../Utils/Registration";
+import axios from "axios";
+import { validateForm } from "../../../../Utils/validateForm";
 
-function SignupForm({ isOpen, onClose }: SignupFormProps) {
+
+export function SignupForm({ isOpen, onClose, onSwitchToLogin }: SignupFormProps) {
     const [formData, setFormData] = useState<FormData>({
-        name: "",
+        firstName: "",
+        lastName: "",
         email: "",
         nic: "",
         contactNumber: "",
@@ -15,6 +19,7 @@ function SignupForm({ isOpen, onClose }: SignupFormProps) {
     const [errors, setErrors] = useState<FormErrors>({});
     const [showPassword, setShowPassword] = useState(false);
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+    const [isSubmitting, setIsSubmitting] = useState(false);
 
     const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
         setFormData({
@@ -30,37 +35,40 @@ function SignupForm({ isOpen, onClose }: SignupFormProps) {
         }
     };
 
-    const validateForm = (): FormErrors => {
-        const newErrors: FormErrors = {};
-
-        if (!formData.name.trim()) newErrors.name = "Name is required";
-        if (!formData.email.trim()) newErrors.email = "Email is required";
-        else if (!/\S+@\S+\.\S+/.test(formData.email)) newErrors.email = "Email is invalid";
-
-        if (!formData.nic.trim()) newErrors.nic = "NIC is required";
-
-        if (!formData.contactNumber.trim()) newErrors.contactNumber = "Contact number is required";
-        else if (!/^[0-9+\-\s()]{10,15}$/.test(formData.contactNumber)) newErrors.contactNumber = "Enter a valid contact number";
-
-        if (!formData.password) newErrors.password = "Password is required";
-        else if (formData.password.length < 8) newErrors.password = "Password must be at least 8 characters";
-
-        if (!formData.confirmPassword) newErrors.confirmPassword = "Please confirm your password";
-        else if (formData.password !== formData.confirmPassword) newErrors.confirmPassword = "Passwords do not match";
-
-        return newErrors;
-    };
-
-    const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
+    const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        const formErrors = validateForm();
+        setIsSubmitting(true);
+
+        const formErrors = validateForm(formData);
 
         if (Object.keys(formErrors).length === 0) {
-            console.log("Form submitted:", formData);
-            onClose();
+            try {
+                const payload = {
+                    first_name: formData.firstName,
+                    last_name: formData.lastName,
+                    email: formData.email,
+                    password: formData.password,
+                    password_confirmation: formData.confirmPassword,
+                    contact_number: formData.contactNumber,
+                    nic: formData.nic,
+                };
+
+                console.log("Submitting form data:", payload);
+                const response = await axios.post("http://127.0.0.1:8000/api/register", payload);
+                if (response.status === 201) {
+                    alert("Registration successful!");
+                    onClose();
+                     onSwitchToLogin();
+                }
+            } catch (error) {
+                console.error("Registration error:", error);
+                setErrors({ submit: "An error occurred during registration. Please try again." });
+            }
         } else {
             setErrors(formErrors);
         }
+
+        setIsSubmitting(false);
     };
 
     if (!isOpen) return null;
@@ -68,7 +76,7 @@ function SignupForm({ isOpen, onClose }: SignupFormProps) {
     return (
         <AnimatePresence>
             <div
-                className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-black/60"
+                className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60"
                 style={{ top: 0, left: 0, width: "100vw", height: "100vh" }}
             >
                 <motion.div
@@ -76,7 +84,7 @@ function SignupForm({ isOpen, onClose }: SignupFormProps) {
                     animate={{ opacity: 1, scale: 1 }}
                     exit={{ opacity: 0, scale: 0.9 }}
                     transition={{ type: "spring", damping: 20 }}
-                    className="relative w-full mt-10 max-w-md max-h-[90vh] overflow-y-auto"
+                    className="relative w-full max-w-md max-h-[90vh] overflow-y-auto"
                 >
                     <div className="bg-white rounded-2xl shadow-2xl overflow-hidden">
                         <div className="p-1 bg-gradient-to-r from-blue-500 to-purple-500">
@@ -86,6 +94,7 @@ function SignupForm({ isOpen, onClose }: SignupFormProps) {
                                     <button
                                         onClick={onClose}
                                         className="text-gray-400 hover:text-gray-600 transition-colors"
+                                        aria-label="Close"
                                     >
                                         <svg
                                             xmlns="http://www.w3.org/2000/svg"
@@ -105,38 +114,51 @@ function SignupForm({ isOpen, onClose }: SignupFormProps) {
                                 </div>
 
                                 <form onSubmit={handleSubmit} className="space-y-4">
-                                    <div>
-                                        <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">
-                                            Full Name
-                                        </label>
-                                        <div className="relative">
-                                            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                                <svg
-                                                    xmlns="http://www.w3.org/2000/svg"
-                                                    className="h-5 w-5 text-gray-400"
-                                                    fill="none"
-                                                    viewBox="0 0 24 24"
-                                                    stroke="currentColor"
-                                                >
-                                                    <path
-                                                        strokeLinecap="round"
-                                                        strokeLinejoin="round"
-                                                        strokeWidth={2}
-                                                        d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
-                                                    />
-                                                </svg>
+                                    <div className="grid grid-cols-2 gap-4">
+                                        <div>
+                                            <label htmlFor="firstName" className="block text-sm font-medium text-gray-700 mb-1">
+                                                First Name
+                                            </label>
+                                            <div className="relative">
+                                                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                                                    </svg>
+                                                </div>
+                                                <input
+                                                    type="text"
+                                                    id="firstName"
+                                                    name="firstName"
+                                                    value={formData.firstName}
+                                                    onChange={handleChange}
+                                                    className={`w-full pl-10 pr-3 py-3 border ${errors.firstName ? 'border-red-500' : 'border-gray-300'} rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition`}
+                                                    placeholder="First name"
+                                                />
                                             </div>
-                                            <input
-                                                type="text"
-                                                id="name"
-                                                name="name"
-                                                value={formData.name}
-                                                onChange={handleChange}
-                                                className={`w-full pl-10 pr-3 py-3 border ${errors.name ? 'border-red-500' : 'border-gray-300'} rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition`}
-                                                placeholder="Enter your full name"
-                                            />
+                                            {errors.firstName && <p className="mt-1 text-sm text-red-600">{errors.firstName}</p>}
                                         </div>
-                                        {errors.name && <p className="mt-1 text-sm text-red-600">{errors.name}</p>}
+                                        <div>
+                                            <label htmlFor="lastName" className="block text-sm font-medium text-gray-700 mb-1">
+                                                Last Name
+                                            </label>
+                                            <div className="relative">
+                                                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                                                    </svg>
+                                                </div>
+                                                <input
+                                                    type="text"
+                                                    id="lastName"
+                                                    name="lastName"
+                                                    value={formData.lastName}
+                                                    onChange={handleChange}
+                                                    className={`w-full pl-10 pr-3 py-3 border ${errors.lastName ? 'border-red-500' : 'border-gray-300'} rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition`}
+                                                    placeholder="Last name"
+                                                />
+                                            </div>
+                                            {errors.lastName && <p className="mt-1 text-sm text-red-600">{errors.lastName}</p>}
+                                        </div>
                                     </div>
 
                                     <div>
@@ -275,6 +297,7 @@ function SignupForm({ isOpen, onClose }: SignupFormProps) {
                                                 type="button"
                                                 className="absolute inset-y-0 right-0 pr-3 flex items-center"
                                                 onClick={() => setShowPassword(!showPassword)}
+                                                aria-label={showPassword ? "Hide password" : "Show password"}
                                             >
                                                 {showPassword ? (
                                                     <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -325,15 +348,16 @@ function SignupForm({ isOpen, onClose }: SignupFormProps) {
                                                 type="button"
                                                 className="absolute inset-y-0 right-0 pr-3 flex items-center"
                                                 onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                                                aria-label={showConfirmPassword ? "Hide password" : "Show password"}
                                             >
                                                 {showConfirmPassword ? (
                                                     <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 极速赛车开奖结果 极速赛车开奖官网 极速赛车开奖记录" />
                                                     </svg>
                                                 ) : (
                                                     <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21" />
+                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 极速赛车开奖结果 极速赛车开奖官网 极速赛车开奖记录" />
                                                     </svg>
                                                 )}
                                             </button>
@@ -344,19 +368,34 @@ function SignupForm({ isOpen, onClose }: SignupFormProps) {
                                     <div className="pt-2">
                                         <motion.button
                                             type="submit"
+                                            disabled={isSubmitting}
                                             whileHover={{ scale: 1.02 }}
                                             whileTap={{ scale: 0.98 }}
-                                            className="w-full bg-gradient-to-r from-blue-500 to-purple-500 text-white py-3 px-4 rounded-lg font-medium shadow-md hover:shadow-lg transition-all"
+                                            className="w-full bg-gradient-to-r from-blue-500 to-purple-500 text-white py-3 px-4 rounded-lg font-medium shadow-md hover:shadow-lg transition-all disabled:opacity-70 disabled:cursor-not-allowed"
                                         >
-                                            Create Account
+                                            {isSubmitting ? (
+                                                <span className="flex items-center justify-center">
+                                                    <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                                                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 极速赛车开奖结果 极速赛车开奖官网 极速赛车开奖记录"></path>
+                                                    </svg>
+                                                    Processing...
+                                                </span>
+                                            ) : (
+                                                "Create Account"
+                                            )}
                                         </motion.button>
                                     </div>
+                                    {errors.submit && <p className="mt-2 text-sm text-red-600 text-center">{errors.submit}</p>}
                                 </form>
 
                                 <div className="mt-6 text-center">
                                     <p className="text-sm text-gray-600">
                                         Already have an account?{" "}
-                                        <button className="text-blue-500 font-medium hover:text-blue-700 transition-colors">
+                                        <button
+                                            onClick={onSwitchToLogin}
+                                            className="text-blue-500 font-medium hover:text-blue-700 transition-colors"
+                                        >
                                             Sign in
                                         </button>
                                     </p>
