@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import type { LoginFormProps } from "../../../../Utils/Registration.ts";
 import { validateLoginForm } from "../../../../Utils/validateForm.tsx";
 import { useAuth } from "../../../Context/Authcontext.tsx";
-
+import { useNavigate } from "react-router-dom";
 
 function LoginForm({ isOpen, onClose, onSwitchToSignup }: LoginFormProps) {
     const [formData, setFormData] = useState({
@@ -16,7 +16,9 @@ function LoginForm({ isOpen, onClose, onSwitchToSignup }: LoginFormProps) {
     const [showPassword, setShowPassword] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     
-    const { login } = useAuth(); 
+    const { login , user } = useAuth(); 
+
+     const navigate = useNavigate()
 
     const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
         const { name, value, type, checked } = e.target;
@@ -41,7 +43,12 @@ function LoginForm({ isOpen, onClose, onSwitchToSignup }: LoginFormProps) {
             setIsLoading(true);
             try {
                 await login(formData.email, formData.password);
-                console.log("Login successful");
+              if(user ?.role === "admin") {
+                  navigate("/admin-dashboard");
+                }
+                else {
+                    navigate("/user-dashboard");
+                }
                 onClose();
             } catch (error: any) {
                 console.error("Login error:", error);
@@ -136,9 +143,7 @@ function LoginForm({ isOpen, onClose, onSwitchToSignup }: LoginFormProps) {
                                         </div>
                                         {errors.email && <p className="mt-1 text-sm text-red-600">{errors.email}</p>}
                                     </div>
-
-                                    {/* Password Field */}
-                                    <div>
+                                     <div>
                                         <label htmlFor="login-password" className="block text-sm font-medium text-gray-700 mb-1">
                                             Password
                                         </label>
@@ -188,8 +193,6 @@ function LoginForm({ isOpen, onClose, onSwitchToSignup }: LoginFormProps) {
                                         </div>
                                         {errors.password && <p className="mt-1 text-sm text-red-600">{errors.password}</p>}
                                     </div>
-
-                                    {/* Remember Me & Forgot Password */}
                                     <div className="flex items-center justify-between">
                                         <label className="flex items-center">
                                             <input
@@ -208,8 +211,6 @@ function LoginForm({ isOpen, onClose, onSwitchToSignup }: LoginFormProps) {
                                             Forgot password?
                                         </button>
                                     </div>
-
-                                    {/* Login Button */}
                                     <div className="pt-2">
                                         <motion.button
                                             type="submit"
@@ -229,8 +230,6 @@ function LoginForm({ isOpen, onClose, onSwitchToSignup }: LoginFormProps) {
                                         </motion.button>
                                     </div>
                                 </form>
-
-                                {/* Social Login Divider */}
                                 <div className="my-6">
                                     <div className="relative">
                                         <div className="absolute inset-0 flex items-center">
@@ -240,8 +239,6 @@ function LoginForm({ isOpen, onClose, onSwitchToSignup }: LoginFormProps) {
                                             <span className="px-2 bg-white text-gray-500">Or continue with</span>
                                         </div>
                                     </div>
-
-                                    {/* Social Login Buttons */}
                                     <div className="grid grid-cols-2 gap-3 mt-4">
                                         <motion.button
                                             type="button"
@@ -274,7 +271,6 @@ function LoginForm({ isOpen, onClose, onSwitchToSignup }: LoginFormProps) {
                                     </div>
                                 </div>
 
-                                {/* Sign Up Link */}
                                 <div className="text-center">
                                     <p className="text-sm text-gray-600">
                                         Don't have an account?{" "}
