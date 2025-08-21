@@ -49,9 +49,7 @@ function LoginForm({ isOpen, onClose, onSwitchToSignup }: LoginFormProps) {
                 else if(user?.role === "user") {
                     navigate("/user-dashboard");
                 }
-                else{
-                    navigate("/");
-                }
+                
                 onClose();
             } catch (error: any) {
                 console.error("Login error:", error);
