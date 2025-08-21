@@ -27,3 +27,37 @@ export function validateForm(formData: FormData): FormErrors {
 
     return newErrors;
 }
+
+
+
+export interface ValidationResult {
+    password: string | undefined;
+    email: string | undefined;
+    isValid: boolean;
+    errors: { [key: string]: string };
+}
+
+export const validateLoginForm = (formData: {
+    email: string;
+    password: string;
+}): ValidationResult => {
+    const errors: { [key: string]: string } = {};
+
+    if (!formData.email.trim()) {
+        errors.email = "Email is required";
+    } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
+        errors.email = "Email is invalid";
+    }
+
+    if (!formData.password) {
+        errors.password = "Password is required";
+    }
+
+    return {
+        isValid: Object.keys(errors).length === 0,
+        errors
+    };
+};
+
+
+
