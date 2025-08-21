@@ -46,8 +46,11 @@ function LoginForm({ isOpen, onClose, onSwitchToSignup }: LoginFormProps) {
               if(user ?.role === "admin") {
                   navigate("/admin-dashboard");
                 }
-                else {
+                else if(user?.role === "user") {
                     navigate("/user-dashboard");
+                }
+                else{
+                    navigate("/");
                 }
                 onClose();
             } catch (error: any) {
