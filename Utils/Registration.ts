@@ -2,7 +2,7 @@ export type SignupFormProps = {
   isOpen: boolean;
   onClose: () => void;
   onSwitchToLogin: () => void;
-};
+ };
 
 export type FormData = {
   firstName: string;
@@ -19,4 +19,6 @@ export type LoginFormProps = {
   onSwitchToSignup: () => void;
 };
 
-export type FormErrors = Partial<Record<keyof FormData, string>> & { submit?: string };
+export type FormErrors = Partial<Record<keyof FormData, string>> & {
+  submit?: string;
+};

@@ -35,7 +35,7 @@ export function SignupForm({ isOpen, onClose, onSwitchToLogin }: SignupFormProps
         }
     };
 
-   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
+    const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         setIsSubmitting(true);
 
@@ -58,6 +58,7 @@ export function SignupForm({ isOpen, onClose, onSwitchToLogin }: SignupFormProps
                 if (response.status === 201) {
                     alert("Registration successful!");
                     onClose();
+                     onSwitchToLogin();
                 }
             } catch (error) {
                 console.error("Registration error:", error);
