@@ -15,10 +15,10 @@ function LoginForm({ isOpen, onClose, onSwitchToSignup }: LoginFormProps) {
     const [errors, setErrors] = useState<{ email?: string; password?: string }>({});
     const [showPassword, setShowPassword] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
-    
-    const { login , user } = useAuth(); 
 
-     const navigate = useNavigate()
+    const { login , user } = useAuth();
+
+    const navigate = useNavigate()
 
     const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
         const { name, value, type, checked } = e.target;
@@ -42,18 +42,17 @@ function LoginForm({ isOpen, onClose, onSwitchToSignup }: LoginFormProps) {
         if (validationResult.isValid) {
             setIsLoading(true);
             try {
-                await login(formData.email, formData.password);
-              if(user ?.role === "admin") {
-                  navigate("/admin-dashboard");
-                }
-                else if(user?.role === "user") {
+                const userData = await login(formData.email, formData.password);
+                if (userData.role === "admin") {
+                    navigate("/admin-dashboard");
+                } else if (userData.role === "user") {
                     navigate("/user-dashboard");
                 }
-                
+
                 onClose();
             } catch (error: any) {
                 console.error("Login error:", error);
-              if (error.response?.data?.message) {
+                if (error.response?.data?.message) {
                     setErrors({ password: error.response.data.message });
                 } else {
                     setErrors({ password: "Login failed. Please try again." });
@@ -65,7 +64,6 @@ function LoginForm({ isOpen, onClose, onSwitchToSignup }: LoginFormProps) {
             setErrors(validationResult.errors);
         }
     };
-
 
     const handleSocialLogin = (provider: string) => {
         console.log(`Logging in with ${provider}`);
@@ -144,7 +142,7 @@ function LoginForm({ isOpen, onClose, onSwitchToSignup }: LoginFormProps) {
                                         </div>
                                         {errors.email && <p className="mt-1 text-sm text-red-600">{errors.email}</p>}
                                     </div>
-                                     <div>
+                                    <div>
                                         <label htmlFor="login-password" className="block text-sm font-medium text-gray-700 mb-1">
                                             Password
                                         </label>
