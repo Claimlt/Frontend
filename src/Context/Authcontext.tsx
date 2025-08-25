@@ -44,6 +44,8 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
             localStorage.setItem('token', newToken);
             setToken(newToken);
             setUser(userData);
+            
+            return userData;
         } catch (error) {
             console.error('Login failed:', error);
             throw error;

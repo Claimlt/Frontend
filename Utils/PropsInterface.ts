@@ -3,14 +3,14 @@ export interface User {
   first_name: string;
   last_name: string;
   email: string;
-  role: string;
   status: string;
   contact_number: string;
+  role: "admin" | "user";
 }
 
 export interface AuthContextType {
   user: User | null;
   token: string | null;
-  login: (email: string, password: string) => Promise<void>;
+  login: (email: string, password: string) => Promise<User>;
   isLoading: boolean;
 }
