@@ -1,7 +1,8 @@
-import { useEffect} from "react";
+import { useEffect } from "react";
 import NavbarAdmin from "./Common Components/NavbarAdmin";
 import Sidebar from "./Common Components/Sidebar";
 import Fillters from "./Common Components/Fillters";
+import { Outlet } from "react-router-dom";
 
 function AdminDashboard() {
 
@@ -14,13 +15,6 @@ function AdminDashboard() {
       window.location.href = "/";
     }
   }, []);
-
-
-
-
- 
-
-
   return (
     <div className="min-h-screen bg-gray-100">
       <NavbarAdmin />
@@ -30,13 +24,7 @@ function AdminDashboard() {
           <div className="bg-white rounded-xl shadow-sm p-6 mb-6">
             <Fillters />
           </div>
-
-
-
-
-         
-            
-        
+          <Outlet />
         </div>
       </div>
     </div>

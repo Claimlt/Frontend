@@ -5,6 +5,7 @@ import {
     FaChartLine,
     FaEye
 } from "react-icons/fa";
+import { Link } from "react-router-dom";
 
 function Sidebar() {
     const [activeTab, setActiveTab] = useState('users');
@@ -23,22 +24,25 @@ function Sidebar() {
                 <h2 className="font-bold text-lg mb-6 text-[#1a2d57]">Admin Dashboard</h2>
 
                 <div className="space-y-2">
-                    <button
-                        className={`w-full flex items-center space-x-3 p-3 rounded-lg transition ${activeTab === 'overview' ? 'bg-[#3a63b8] text-white' : 'hover:bg-gray-100'}`}
-                        onClick={() => setActiveTab('overview')}
-                    >
-                        <FaChartLine />
-                        <span>Overview</span>
-                    </button>
+                    <Link to="overview">
+                        <button
+                            className={`w-full flex items-center space-x-3 p-3 rounded-lg transition ${activeTab === 'overview' ? 'bg-[#3a63b8] text-white' : 'hover:bg-gray-100'}`}
+                            onClick={() => setActiveTab('overview')}
+                        >
+                            <FaChartLine />
+                            <span>Overview</span>
+                        </button>
+                    </Link>
 
-                    <button
-                        className={`w-full flex items-center space-x-3 p-3 rounded-lg transition ${activeTab === 'users' ? 'bg-[#3a63b8] text-white' : 'hover:bg-gray-100'}`}
-                        onClick={() => setActiveTab('users')}
-                    >
-                        <FaUsers />
-                        <span>User Management</span>
-                    </button>
-
+                    <Link to="user-management">
+                        <button
+                            className={`w-full flex items-center space-x-3 p-3 rounded-lg transition ${activeTab === 'users' ? 'bg-[#3a63b8] text-white' : 'hover:bg-gray-100'}`}
+                            onClick={() => setActiveTab('users')}
+                        >
+                            <FaUsers />
+                            <span>User Management</span>
+                        </button>
+                    </Link>
                     <button
                         className={`w-full flex items-center space-x-3 p-3 rounded-lg transition ${activeTab === 'posts' ? 'bg-[#3a63b8] text-white' : 'hover:bg-gray-100'}`}
                         onClick={() => setActiveTab('posts')}
@@ -46,7 +50,7 @@ function Sidebar() {
                         <FaEye />
                         <span>Content Moderation</span>
                     </button>
-
+                    <Link to="reports">
                     <button
                         className={`w-full flex items-center space-x-3 p-3 rounded-lg transition ${activeTab === 'reports' ? 'bg-[#3a63b8] text-white' : 'hover:bg-gray-100'}`}
                         onClick={() => setActiveTab('reports')}
@@ -54,6 +58,7 @@ function Sidebar() {
                         <FaBell />
                         <span>Reports</span>
                     </button>
+                    </Link>
                 </div>
 
                 <div className="mt-8 pt-8 border-t border-gray-200">
