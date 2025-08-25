@@ -14,11 +14,11 @@ import { Link } from "react-router-dom";
 
 function Navbar() {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  const dropdownRef = useRef(null);
+  const dropdownRef = useRef<HTMLDivElement>(null); // Add type annotation
 
   useEffect(() => {
-    function handleClickOutside(event : MouseEvent) {
-      if (dropdownRef.current && !dropdownRef.current.contains (event.target)) {
+    function handleClickOutside(event: MouseEvent) {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
         setIsDropdownOpen(false);
       }
     }
@@ -29,15 +29,18 @@ function Navbar() {
     };
   }, []);
 
-  const handleSignOut = async() => {
-    try{
-      await axios.post("http://127.0.0.1:8000/api/logout",{}, {
-        headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
-      });
-      localStorage.removeItem('token');
+  const handleSignOut = async () => {
+    try {
+      await axios.post(
+        "http://127.0.0.1:8000/api/logout",
+        {},
+        {
+          headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+        }
+      );
+      localStorage.removeItem("token");
       window.location.href = "/";
-    }
-    catch(error){
+    } catch (error) {
       console.log("Error signing out:", error);
     }
     setIsDropdownOpen(false);
