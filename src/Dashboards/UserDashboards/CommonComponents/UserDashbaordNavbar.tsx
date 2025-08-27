@@ -18,7 +18,7 @@ function Navbar() {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const { user } = useAuth();
-
+const storedName = localStorage.getItem("user");
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
@@ -70,7 +70,6 @@ function Navbar() {
           </div>
         </div>
 
-        {/* Navigation Icons and Profile */}
         <div className="flex items-center space-x-5">
           <button className="relative p-2 hover:bg-[#2c4a8a] rounded-lg transition-colors" title="Home">
             <FaHome className="text-xl" />
@@ -103,14 +102,16 @@ function Navbar() {
                     className="w-full h-full object-cover"
                   />
                 </div>
-                {user && (
-                  <div className="hidden md:flex flex-col items-start">
-                    <span className="text-sm font-medium whitespace-nowrap">
-                      {user.first_name} {user.last_name}
-                    </span>
-                    <span className="text-xs text-gray-300">@{user.first_name?.toLowerCase()}</span>
-                  </div>
-                )}
+                {(user || storedName) && (
+  <div className="hidden md:flex flex-col items-start">
+    <span className="text-sm font-medium whitespace-nowrap">
+      {user ? `${user.first_name} ${user.last_name}` : storedName}
+    </span>
+    <span className="text-xs text-gray-300">
+      @{user ? user.first_name?.toLowerCase() : storedName?.split(" ")[0]?.toLowerCase()}
+    </span>
+  </div>
+)}
                 <FaChevronDown 
                   className={`text-xs transition-transform ${isDropdownOpen ? 'rotate-180' : ''}`} 
                 />
