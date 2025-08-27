@@ -4,6 +4,7 @@ import AdminDashboard from "./Dashboards/AdminDashboards/AdminDashboard.tsx";
 import OverView from "./Dashboards/AdminDashboards/Components/OverView.tsx";
 import Reports from "./Dashboards/AdminDashboards/Components/Reports.tsx";
 import Users from "./Dashboards/AdminDashboards/Components/Users.tsx";
+import Profile from "./Dashboards/UserDashboards/CommonComponents/Profile.tsx";
 import UserPosts from "./Dashboards/UserDashboards/Components/UserPosts.tsx";
 import UserDashboard from "./Dashboards/UserDashboards/UserDashboard.tsx";
 import MainSection from "./Web/Components/MainSection.tsx";
@@ -19,6 +20,7 @@ function App() {
           <Route path="/user-dashboard" element={<UserDashboard/>} >
            <Route index element ={<UserPosts/>} />
             <Route path="user-posts" element={<UserPosts />} />
+            <Route path="profile" element={<Profile />} />
           </Route>
           <Route path="/admin-dashboard" element={<AdminDashboard />} >
            <Route index element ={<OverView/>} />
