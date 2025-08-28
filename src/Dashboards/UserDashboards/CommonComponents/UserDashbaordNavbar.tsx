@@ -13,12 +13,15 @@ import {
 } from "react-icons/fa";
 import { Link } from "react-router-dom";
 import { useAuth } from "../../../Context/Authcontext";
+import MakePost from "./MakePost";
 
 function Navbar() {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const { user } = useAuth();
-const storedName = localStorage.getItem("user");
+  const storedName = localStorage.getItem("user");
+
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
@@ -49,6 +52,14 @@ const storedName = localStorage.getItem("user");
     setIsDropdownOpen(false);
   };
 
+  const handlePostSubmit = (content: string, privacy: string) => {
+    console.log('New post:', content, 'Privacy:', privacy);
+
+  };
+  const handleModelOpen =()=>{
+    setIsModalOpen(!isModalOpen);
+  }
+
   return (
     <nav className="bg-[#1a2d57] text-white p-4 fixed w-full top-0 z-10 shadow-md">
       <div className="max-w-7xl mx-auto flex items-center justify-between">
@@ -77,7 +88,7 @@ const storedName = localStorage.getItem("user");
           <button className="relative p-2 hover:bg-[#2c4a8a] rounded-lg transition-colors" title="Messages">
             <FaEnvelope className="text-xl" />
           </button>
-          <button className="relative p-2 hover:bg-[#2c4a8a] rounded-lg transition-colors" title="Create">
+          <button onClick={ handleModelOpen} className="relative p-2 hover:bg-[#2c4a8a] rounded-lg transition-colors" title="Create">
             <FaPlus className="text-xl" />
           </button>
           <button className="relative p-2 hover:bg-[#2c4a8a] rounded-lg transition-colors" title="My Posts">
@@ -103,17 +114,17 @@ const storedName = localStorage.getItem("user");
                   />
                 </div>
                 {(user || storedName) && (
-  <div className="hidden md:flex flex-col items-start">
-    <span className="text-sm font-medium whitespace-nowrap">
-      {user ? `${user.first_name} ${user.last_name}` : storedName}
-    </span>
-    <span className="text-xs text-gray-300">
-      @{user ? user.first_name?.toLowerCase() : storedName?.split(" ")[0]?.toLowerCase()}
-    </span>
-  </div>
-)}
-                <FaChevronDown 
-                  className={`text-xs transition-transform ${isDropdownOpen ? 'rotate-180' : ''}`} 
+                  <div className="hidden md:flex flex-col items-start">
+                    <span className="text-sm font-medium whitespace-nowrap">
+                      {user ? `${user.first_name} ${user.last_name}` : storedName}
+                    </span>
+                    <span className="text-xs text-gray-300">
+                      @{user ? user.first_name?.toLowerCase() : storedName?.split(" ")[0]?.toLowerCase()}
+                    </span>
+                  </div>
+                )}
+                <FaChevronDown
+                  className={`text-xs transition-transform ${isDropdownOpen ? 'rotate-180' : ''}`}
                 />
               </div>
             </button>
@@ -139,7 +150,7 @@ const storedName = localStorage.getItem("user");
                     </div>
                   )}
                 </div>
-                
+
                 <div className="py-2">
                   <Link
                     to="/profile"
@@ -158,9 +169,9 @@ const storedName = localStorage.getItem("user");
                     Settings
                   </Link>
                 </div>
-                
+
                 <hr className="my-1 border-gray-700" />
-                
+
                 <button
                   onClick={handleSignOut}
                   className="flex items-center w-full px-4 py-2 text-sm text-white hover:bg-[#3a63b8] transition-colors"
@@ -171,6 +182,11 @@ const storedName = localStorage.getItem("user");
               </div>
             )}
           </div>
+          <MakePost
+            isOpen={isModalOpen}
+            onClose={() => setIsModalOpen(false)}
+            onSubmit={handlePostSubmit}
+          />
         </div>
       </div>
     </nav>

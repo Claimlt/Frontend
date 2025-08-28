@@ -12,7 +12,7 @@ function UserDashboard() {
   return (
     <div className="min-h-screen bg-gray-50">
       <Navbar />
-                 {showDetailsModal && <UserDetailsModal />}
+      {showDetailsModal && <UserDetailsModal />}
       <div className="pt-20 pb-8 container mt-5 mx-auto grid grid-cols-1 md:grid-cols-12 gap-6 px-4">
         <div className="md:col-span-3">
           <UserDetails />
