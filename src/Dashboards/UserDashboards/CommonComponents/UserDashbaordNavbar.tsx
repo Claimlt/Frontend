@@ -56,13 +56,13 @@ function Navbar() {
     console.log('New post:', content, 'Privacy:', privacy);
 
   };
-  const handleModelOpen =()=>{
+  const handleModelOpen = () => {
     setIsModalOpen(!isModalOpen);
   }
 
   return (
     <nav className="bg-[#1a2d57] text-white p-4 fixed w-full top-0 z-10 shadow-md">
-      <div className="max-w-7xl mx-auto flex items-center justify-between">
+      <div className="container mx-auto flex items-center justify-between">
         <div className="flex items-center">
           <img
             src="/LogoWhite.png"
@@ -88,7 +88,7 @@ function Navbar() {
           <button className="relative p-2 hover:bg-[#2c4a8a] rounded-lg transition-colors" title="Messages">
             <FaEnvelope className="text-xl" />
           </button>
-          <button onClick={ handleModelOpen} className="relative p-2 hover:bg-[#2c4a8a] rounded-lg transition-colors" title="Create">
+          <button onClick={handleModelOpen} className="relative p-2 hover:bg-[#2c4a8a] rounded-lg transition-colors" title="Create">
             <FaPlus className="text-xl" />
           </button>
           <button className="relative p-2 hover:bg-[#2c4a8a] rounded-lg transition-colors" title="My Posts">
@@ -185,7 +185,6 @@ function Navbar() {
           <MakePost
             isOpen={isModalOpen}
             onClose={() => setIsModalOpen(false)}
-            onSubmit={handlePostSubmit}
           />
         </div>
       </div>
