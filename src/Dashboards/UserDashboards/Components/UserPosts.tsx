@@ -1,6 +1,29 @@
-
+import axios from "axios"
+import { useEffect, useState } from "react"
+import type { Post } from "../../../../Utils/PropsInterface";
 
 function UserPosts() {
+const [posts, setPosts] = useState<Post[]>([]);
+     const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
+  useEffect(() => {
+    const fetchPosts = async () => {
+      try {
+        const response = await axios.get("http://127.0.0.1:8000/api/posts", {
+          headers: {
+            "Authorization": `Bearer ${localStorage.getItem("token")}`
+          }
+        })
+        setPosts(response.data.data)
+      } catch (err) {
+        setError("Failed to fetch posts")
+      } finally {
+        setLoading(false)
+      }
+    }
+    fetchPosts();
+  }, [])
+
   return (
     <div>
       <div className="bg-white rounded-xl shadow-sm p-6 mb-6">
@@ -36,44 +59,49 @@ function UserPosts() {
         </div>
       </div>
 
-      {[1].map(post => (
-        <div key={post} className="bg-white rounded-xl shadow-sm p-6 mb-6">
+      {posts.map((post, index) => (
+        <div key={index} className="bg-white rounded-xl shadow-sm p-6 mb-6">
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center space-x-3">
-              <div className="w-10 h-10 rounded-full bg-gray-200">
+              <div className="w-10 h-10 rounded-full bg-gray-200 overflow-hidden">
                 <img
-                  src="/pasindu.jpg"
+                  src={"/pasindu.jpg"}  
                   alt="user profile"
                   className="w-full h-full object-cover"
                 />
               </div>
               <div>
-                <p className="font-medium">user_{post}</p>
-                <p className="text-xs text-gray-500">2 hours ago</p>
+                <p className="font-medium">User ID: </p>
+                <p className="text-xs text-gray-500">
+                  {new Date(post.created_at).toLocaleString()}
+                </p>
               </div>
             </div>
             <button>⋯</button>
           </div>
 
           <div className="mb-4">
-            <p className="mb-2">Found this item near the campus library. Please contact if it's yours!</p>
-            <div className="h-80 bg-gray-200 rounded-lg">
-              <img
-                src="https://images.unsplash.com/photo-1553062407-98eeb64c6a62?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=600&q=80"
-                alt="post"
-                className="w-full h-full object-cover rounded-lg"
-              />
-            </div>
-          </div>
+            <h3 className="font-semibold mb-1">{post.title}</h3>
+            <p className="mb-2">{post.description}</p>
 
+            {post.images && post.images.length > 0 && (
+              <div className="h-80 bg-gray-200 rounded-lg">
+                <img
+                  src={post.images[0].url}   
+                  alt="post"
+                  className="w-full h-full object-cover rounded-lg"
+                />
+              </div>
+            )}
+          </div>
           <div className="flex justify-between text-gray-500">
             <button className="flex items-center space-x-1">
               <span>❤️</span>
-              <span>24</span>
+              <span>2</span>
             </button>
             <button className="flex items-center space-x-1">
               <span>💬</span>
-              <span>5</span>
+              <span>2</span>
             </button>
             <button className="flex items-center space-x-1">
               <span>↗️</span>

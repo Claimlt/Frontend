@@ -32,3 +32,22 @@ export interface AuthContextType {
   showDetailsModal: boolean;
   setShowDetailsModal: (show: boolean) => void;
  }
+ export interface Image {
+  id: string;
+  filename: string;
+  url: string;
+  created_at: string;
+  updated_at: string;
+}
+
+ export  interface Post {
+  id: string;
+  title: string;
+  description: string;
+  user_id: string;
+  created_at: string;
+  updated_at: string;
+  images: Image[];
+  likes_count?: number;
+  comments_count?: number;
+}
