@@ -1,11 +1,16 @@
-import axios from "axios"
-import { useEffect, useState } from "react"
+import axios from "axios";
+import { useEffect, useState } from "react";
 import type { Post } from "../../../../Utils/PropsInterface";
+import LoadingBanner from "./Banners/LoadingBanner";
+import SkeletonPost from "./Banners/SkeletonPost";
+
+
 
 function UserPosts() {
-const [posts, setPosts] = useState<Post[]>([]);
-     const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
+  const [posts, setPosts] = useState<Post[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  
   useEffect(() => {
     const fetchPosts = async () => {
       try {
@@ -13,17 +18,26 @@ const [posts, setPosts] = useState<Post[]>([]);
           headers: {
             "Authorization": `Bearer ${localStorage.getItem("token")}`
           }
-        })
-        setPosts(response.data.data)
+        });
+        setPosts(response.data.data);
       } catch (err) {
-        setError("Failed to fetch posts")
+        setError("Failed to fetch posts");
       } finally {
-        setLoading(false)
+        setLoading(false);
       }
-    }
+    };
     fetchPosts();
-  }, [])
-
+  }, []);
+ 
+  if (loading) return (
+    <div>
+      <LoadingBanner />
+    {[1].map(item => <SkeletonPost key={item} />)}
+    </div>
+  );
+  
+  if (error) return <p className="text-center text-red-500 py-8">{error}</p>;
+ if (posts.length === 0) return <p className="text-center">No posts available</p>;
   return (
     <div>
       <div className="bg-white rounded-xl shadow-sm p-6 mb-6">
@@ -50,7 +64,8 @@ const [posts, setPosts] = useState<Post[]>([]);
               src="/pasindu.jpg"
               alt="user profile"
               className="w-full h-full object-cover"
-            /></div>
+            />
+          </div>
           <input
             type="text"
             placeholder="What's new to report?"
@@ -65,7 +80,7 @@ const [posts, setPosts] = useState<Post[]>([]);
             <div className="flex items-center space-x-3">
               <div className="w-10 h-10 rounded-full bg-gray-200 overflow-hidden">
                 <img
-                  src={"/pasindu.jpg"}  
+                  src={"/pasindu.jpg"}
                   alt="user profile"
                   className="w-full h-full object-cover"
                 />
@@ -87,7 +102,7 @@ const [posts, setPosts] = useState<Post[]>([]);
             {post.images && post.images.length > 0 && (
               <div className="h-80 bg-gray-200 rounded-lg">
                 <img
-                  src={post.images[0].url}   
+                  src={(post.images[0].url)}
                   alt="post"
                   className="w-full h-full object-cover rounded-lg"
                 />
@@ -103,15 +118,14 @@ const [posts, setPosts] = useState<Post[]>([]);
               <span>💬</span>
               <span>2</span>
             </button>
-            <button className="flex items-center space-x-1">
-              <span>↗️</span>
-              <span>Share</span>
+            <button className="flex p-2 rounded-lg  bg-[#1a2d57] text-sm text-white items-center space-x-1">
+              <span>Claim this</span>
             </button>
           </div>
         </div>
       ))}
     </div>
-  )
+  );
 }
 
-export default UserPosts
+export default UserPosts;
