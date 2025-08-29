@@ -10,7 +10,7 @@ function UserPosts() {
   const [posts, setPosts] = useState<Post[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  
+
   useEffect(() => {
     const fetchPosts = async () => {
       try {
@@ -28,16 +28,16 @@ function UserPosts() {
     };
     fetchPosts();
   }, []);
- 
+
   if (loading) return (
     <div>
       <LoadingBanner />
-    {[1].map(item => <SkeletonPost key={item} />)}
+      {[1].map(item => <SkeletonPost key={item} />)}
     </div>
   );
-  
+
   if (error) return <p className="text-center text-red-500 py-8">{error}</p>;
- if (posts.length === 0) return <p className="text-center">No posts available</p>;
+  if (posts.length === 0) return <p className="text-center">No posts available</p>;
   return (
     <div>
       <div className="bg-white rounded-xl shadow-sm p-6 mb-6">
@@ -86,7 +86,7 @@ function UserPosts() {
                 />
               </div>
               <div>
-                <p className="font-medium">User ID: </p>
+                <p className="font-medium">User Name </p>
                 <p className="text-xs text-gray-500">
                   {new Date(post.created_at).toLocaleString()}
                 </p>
@@ -97,7 +97,7 @@ function UserPosts() {
 
           <div className="mb-4">
             <h3 className="font-semibold mb-1">{post.title}</h3>
-            <p className="mb-2">{post.description}</p>
+            <p className="mb-2 font-medium text-gray-500">{post.description}</p>
 
             {post.images && post.images.length > 0 && (
               <div className="h-80 bg-gray-200 rounded-lg">
