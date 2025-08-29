@@ -1,5 +1,5 @@
 import { useState, useRef, type FormEvent, type ChangeEvent } from 'react';
-import { X, Image, Globe, Trash2 } from 'lucide-react';
+import { X, Image, Globe, Trash2, Info } from 'lucide-react';
 import axios from 'axios';
 
 interface MakePostProps {
@@ -40,52 +40,52 @@ function MakePost({ isOpen, onClose, onPostCreated }: MakePostProps) {
   };
 
   const handleSubmit = async (e: FormEvent) => {
-  e.preventDefault();
-  setError(null);
+    e.preventDefault();
+    setError(null);
 
-  if (!postTitle.trim() && !postContent.trim() && selectedImages.length === 0) return;
+    if (!postTitle.trim() && !postContent.trim() && selectedImages.length === 0) return;
 
-  setIsUploading(true);
+    setIsUploading(true);
 
-  try {
-    const imageIds: string[] = [];
-    for (const image of selectedImages) {
-      try {
-        const imageId = await uploadImage(image.file);
-        imageIds.push(imageId); 
-      } catch (err) {
-        console.error('Error uploading image:', err);
+    try {
+      const imageIds: string[] = [];
+      for (const image of selectedImages) {
+        try {
+          const imageId = await uploadImage(image.file);
+          imageIds.push(imageId); 
+        } catch (err) {
+          console.error('Error uploading image:', err);
+        }
       }
+
+      const payload: any = {
+        title: postTitle.trim() || postContent.substring(0, 100),
+        description: postContent,
+      };
+
+      if (imageIds.length > 0) {
+        payload.images = imageIds;
+      }
+
+      await axios.post('http://127.0.0.1:8000/api/posts', payload, {
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem("token")}`,
+          'Content-Type': 'application/json',
+        },
+      });
+
+      setPostTitle('');
+      setPostContent('');
+      setSelectedImages([]);
+      if (onPostCreated) onPostCreated();
+      onClose();
+    } catch (err: any) {
+      console.error('Error submitting post:', err);
+      setError(err.response?.data?.message || 'Failed to create post. Please try again.');
+    } finally {
+      setIsUploading(false);
     }
-
-    const payload: any = {
-      title: postTitle.trim() || postContent.substring(0, 100),
-      description: postContent,
-    };
-
-    if (imageIds.length > 0) {
-      payload.images = imageIds;
-    }
-
-    await axios.post('http://127.0.0.1:8000/api/posts', payload, {
-      headers: {
-        'Authorization': `Bearer ${localStorage.getItem("token")}`,
-        'Content-Type': 'application/json',
-      },
-    });
-
-    setPostTitle('');
-    setPostContent('');
-    setSelectedImages([]);
-    if (onPostCreated) onPostCreated();
-    onClose();
-  } catch (err: any) {
-    console.error('Error submitting post:', err);
-    setError(err.response?.data?.message || 'Failed to create post. Please try again.');
-  } finally {
-    setIsUploading(false);
-  }
-};
+  };
 
   const handleClose = () => {
     setPostTitle('');
@@ -137,24 +137,32 @@ function MakePost({ isOpen, onClose, onPostCreated }: MakePostProps) {
   return (
     <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4">
       <div
-        className="bg-white rounded-xl w-full max-w-2xl shadow-2xl overflow-hidden transform transition-all duration-300 scale-95 opacity-0 animate-fade-in"
-        style={{ animation: 'fadeIn 0.2s ease-out forwards', maxHeight: '90vh' }}
+        className="bg-white rounded-2xl w-full max-w-2xl shadow-2xl overflow-hidden transform transition-all duration-300 scale-95 opacity-0 animate-fade-in"
+        style={{ animation: 'fadeIn 0.25s ease-out forwards', maxHeight: '90vh' }}
       >
         <div className="flex items-center justify-between p-4 border-b">
-          <h2 className="text-xl font-bold text-gray-800">Create Post</h2>
+          <h2 className="text-xl font-bold text-gray-800">Report Found Item</h2>
           <button onClick={handleClose} className="p-1.5 rounded-full hover:bg-gray-100" aria-label="Close">
             <X size={22} className="text-gray-600" />
           </button>
         </div>
 
+        <div className="bg-blue-50 border-l-4 border-red-500 flex items-start gap-2 p-3 m-4 rounded">
+          <Info size={18} className="text-red-600 mt-0.5" />
+          <p className="text-sm text-red-700">
+            This post is only for <strong>items you found</strong> that might belong to someone else.
+            Please share details so the owner can contact you.
+          </p>
+        </div>
+
         {error && (
-          <div className="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 mx-4 mt-4 rounded">
+          <div className="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 mx-4 rounded">
             <p>{error}</p>
           </div>
         )}
 
         <div className="p-4 flex items-center gap-3">
-          <div className="w-10 h-10 bg-gradient-to-r from-blue-400 to-purple-500 rounded-full flex-shrink-0"></div>
+          <div className="w-10 h-10 bg-[#1a2d57] rounded-full flex-shrink-0"></div>
           <div>
             <p className="font-semibold text-gray-800">{storedName}</p>
             <div className="flex items-center gap-1">
@@ -175,8 +183,8 @@ function MakePost({ isOpen, onClose, onPostCreated }: MakePostProps) {
               type="text"
               value={postTitle}
               onChange={(e) => setPostTitle(e.target.value)}
-              placeholder="Post title (optional)"
-              className="w-full text-gray-900 border-none focus:ring-0 text-xl font-semibold p-0 placeholder-gray-400 focus:outline-none mb-3"
+              placeholder="Enter the name of the item you found (e.g., Wallet, Phone)"
+              className="w-full text-gray-900 border-none focus:ring-0 text-lg font-medium p-0 placeholder-gray-400 focus:outline-none mb-3"
               maxLength={100}
             />
 
@@ -184,8 +192,8 @@ function MakePost({ isOpen, onClose, onPostCreated }: MakePostProps) {
               ref={textareaRef}
               value={postContent}
               onChange={handleTextareaChange}
-              placeholder="What's on your mind?"
-              className="w-full min-h-[120px] text-gray-900 resize-none border-none focus:ring-0 text-lg p-0 placeholder-gray-400 focus:outline-none"
+              placeholder="Add details about where and when you found the item..."
+              className="w-full text-lg min-h-[120px] text-gray-900 resize-none border-none focus:ring-0  p-0 placeholder-gray-400 focus:outline-none"
             />
 
             <div className="text-xs text-gray-500 mt-1 text-right">{postContent.length}/∞</div>
@@ -194,7 +202,7 @@ function MakePost({ isOpen, onClose, onPostCreated }: MakePostProps) {
               <div className="mt-4 grid grid-cols-2 gap-2">
                 {selectedImages.map((image) => (
                   <div key={image.id} className="relative group">
-                    <img src={image.url} alt="Preview" className="w-full h-32 object-cover rounded-lg" />
+                    <img src={image.url} alt="Preview" className="w-full h-32 object-cover rounded-lg shadow-sm" />
                     <button
                       type="button"
                       onClick={() => removeImage(image.id)}
@@ -208,26 +216,23 @@ function MakePost({ isOpen, onClose, onPostCreated }: MakePostProps) {
             )}
           </div>
 
-          <div className="border-t p-4">
-            <p className="text-sm font-medium mb-2 text-gray-700">Add to your post</p>
+          <div className="border-t p-4 flex items-center justify-between">
             <div className="flex items-center gap-3">
               <input type="file" ref={fileInputRef} onChange={handleImageSelect} accept="image/*" multiple className="hidden" />
               <button type="button" onClick={triggerFileInput} className="p-2.5 rounded-full hover:bg-blue-50 text-blue-500">
                 <Image size={20} />
               </button>
             </div>
-          </div>
-
-          <div className="p-4 border-t">
             <button
               type="submit"
               disabled={(!postTitle.trim() && !postContent.trim() && selectedImages.length === 0) || isUploading}
-              className={`w-full py-3 rounded-lg font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 ${(!postTitle.trim() && !postContent.trim() && selectedImages.length === 0) || isUploading
+              className={`px-6 py-2.5 rounded-lg font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 ${
+                (!postTitle.trim() && !postContent.trim() && selectedImages.length === 0) || isUploading
                   ? 'bg-gray-200 text-gray-500 cursor-not-allowed focus:ring-gray-300'
                   : 'bg-blue-600 hover:bg-blue-700 text-white focus:ring-blue-500'
-                }`}
+              }`}
             >
-              {isUploading ? 'Posting...' : 'Post'}
+              {isUploading ? 'Posting...' : 'Post Found Item'}
             </button>
           </div>
         </form>
@@ -238,7 +243,7 @@ function MakePost({ isOpen, onClose, onPostCreated }: MakePostProps) {
           from { opacity: 0; transform: scale(0.95); }
           to { opacity: 1; transform: scale(1); }
         }
-        .animate-fade-in { animation: fadeIn 0.2s ease-out forwards; }
+        .animate-fade-in { animation: fadeIn 0.25s ease-out forwards; }
       `}</style>
     </div>
   );
