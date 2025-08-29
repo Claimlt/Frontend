@@ -1,7 +1,7 @@
 import axios from 'axios';
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState } from 'react';
 import type { ReactNode } from 'react';
-import type { User, AuthContextType } from "../../Utils/PropsInterface";
+import type { User, AuthContextType, UserDetails } from "../../Utils/PropsInterface";
 
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -10,27 +10,10 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     const [user, setUser] = useState<User | null>(null);
     const [token, setToken] = useState<string | null>(localStorage.getItem('token'));
     const [isLoading, setIsLoading] = useState(true);
+    const [userDetails, setUserDetails] = useState<UserDetails | null>(null);
+    const [showDetailsModal, setShowDetailsModal] = useState(false);
 
-    useEffect(() => {
-        if (token) {
-            verifyToken();
-        } else {
-            setIsLoading(false);
-        }
-    }, [token]);
 
-    const verifyToken = async () => {
-        try {
-            const response = await axios.get('http://127.0.0.1:8000/api/user', {
-                headers: { Authorization: `Bearer ${token}` }
-            });
-            setUser(response.data);
-        } catch (error) {
-            console.error('Token verification failed:', error);
-        } finally {
-            setIsLoading(false);
-        }
-    };
 
     const login = async (email: string, password: string) => {
         try {
@@ -39,12 +22,19 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
                 password
             });
 
-            const { token: newToken, user: userData } = response.data;
+            const { token: newToken, user: userData, user_details, show_details_modal } = response.data;
 
             localStorage.setItem('token', newToken);
+            localStorage.setItem(
+                "user",
+                userData.first_name && userData.last_name
+                    ? userData.first_name + " " + userData.last_name
+                    : userData.email
+            );
             setToken(newToken);
             setUser(userData);
-            
+            setUserDetails(user_details);
+            setShowDetailsModal(show_details_modal);
             return userData;
         } catch (error) {
             console.error('Login failed:', error);
@@ -53,7 +43,15 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     };
 
     return (
-        <AuthContext.Provider value={{ user, token, login, isLoading }}>
+        <AuthContext.Provider value={{
+            user,
+            userDetails,
+            token,
+            login,
+            isLoading,
+            showDetailsModal, setShowDetailsModal,
+
+        }}>
             {children}
         </AuthContext.Provider>
     );

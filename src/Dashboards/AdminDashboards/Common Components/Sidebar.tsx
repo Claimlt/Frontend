@@ -26,7 +26,7 @@ function Sidebar() {
                 <div className="space-y-2">
                     <Link to="overview">
                         <button
-                            className={`w-full flex items-center space-x-3 p-3 rounded-lg transition ${activeTab === 'overview' ? 'bg-[#3a63b8] text-white' : 'hover:bg-gray-100'}`}
+                            className={`w-full flex items-center space-x-3 p-3 mb-3 rounded-lg transition ${activeTab === 'overview' ? 'bg-[#3a63b8] text-white' : 'hover:bg-gray-100'}`}
                             onClick={() => setActiveTab('overview')}
                         >
                             <FaChartLine />
@@ -36,7 +36,7 @@ function Sidebar() {
 
                     <Link to="user-management">
                         <button
-                            className={`w-full flex items-center space-x-3 p-3 rounded-lg transition ${activeTab === 'users' ? 'bg-[#3a63b8] text-white' : 'hover:bg-gray-100'}`}
+                            className={`w-full flex items-center space-x-3 p-3 mb-3 rounded-lg transition ${activeTab === 'users' ? 'bg-[#3a63b8] text-white' : 'hover:bg-gray-100'}`}
                             onClick={() => setActiveTab('users')}
                         >
                             <FaUsers />
@@ -44,7 +44,7 @@ function Sidebar() {
                         </button>
                     </Link>
                     <button
-                        className={`w-full flex items-center space-x-3 p-3 rounded-lg transition ${activeTab === 'posts' ? 'bg-[#3a63b8] text-white' : 'hover:bg-gray-100'}`}
+                        className={`w-full flex items-center space-x-3 p-3 mb-3 rounded-lg transition ${activeTab === 'posts' ? 'bg-[#3a63b8] text-white' : 'hover:bg-gray-100'}`}
                         onClick={() => setActiveTab('posts')}
                     >
                         <FaEye />

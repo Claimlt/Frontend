@@ -16,7 +16,7 @@ function LoginForm({ isOpen, onClose, onSwitchToSignup }: LoginFormProps) {
     const [showPassword, setShowPassword] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
 
-    const { login , user } = useAuth();
+    const { login} = useAuth();
 
     const navigate = useNavigate()
 

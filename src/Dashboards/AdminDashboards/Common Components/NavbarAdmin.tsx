@@ -19,14 +19,12 @@ function NavbarAdmin() {
     return (
         <div>
             <nav className="bg-[#1a2d57] text-white p-4 fixed w-full top-0 z-10 shadow-md">
-                <div className="max-w-7xl mx-auto flex items-center justify-between">
-                    {/* Logo */}
+                <div className="container mx-auto flex items-center justify-between">
+
                     <div className="flex items-center">
-                        <div className="text-xl font-bold mr-2">🔍</div>
-                        <span className="font-bold text-xl">FindIt Admin</span>
+                       <img src="/LogoWhite.png" alt="Logo" className="h-auto w-30 mr-2"/>
                     </div>
 
-                    {/* Search Bar */}
                     <div className="flex-1 max-w-xl mx-4">
                         <div className="relative">
                             <input
@@ -40,7 +38,6 @@ function NavbarAdmin() {
                         </div>
                     </div>
 
-                    {/* Navigation Icons */}
                     <div className="flex items-center space-x-5">
                         <button className="relative p-1 hover:text-[#3a63b8] transition-colors">
                             <div className="relative">
