@@ -68,11 +68,7 @@ const Profile: React.FC = () => {
                     'Content-Type': 'multipart/form-data',
                     Authorization: `Bearer ${token}`
                 }
-            });
-            
-            // Update the context with new details
-            // updateUserDetails(response.data.user_details);
-            
+            });    
             alert('Profile updated successfully!');
         } catch (error) {
             console.error('Failed to update profile:', error);
