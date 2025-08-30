@@ -14,25 +14,32 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     const [showDetailsModal, setShowDetailsModal] = useState(false);
     const [userProfile, setUserProfile] = useState<Profile | null>();
 
-    useEffect(() => {
-        const VerifyUserDetails = async () => {
-            const response = await axios.get('http://127.0.0.1:8000/api/profile', {
-                headers: {
-                    Authorization: `Bearer ${localStorage.getItem("token")}`,
-                },
-            });
-            console.log(response.data);
-            setUserProfile(response.data);
-            if (response.data.avatar == null) {
-                console.log("Ok");
-            }
-            else {
+  useEffect(() => {
+  const VerifyUserDetails = async () => {
+    try {
+      const response = await axios.get<Profile>(
+        "http://127.0.0.1:8000/api/profile",
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
+      );
 
-            }
-        };
+      setUserProfile(response.data);
 
-        VerifyUserDetails();
-    }, []);
+      if (response.data.avatar == null) {
+        setShowDetailsModal(true); 
+      }
+    } catch (error) {
+      console.error("Error fetching profile:", error);
+    } finally {
+      setIsLoading(false); 
+    }
+  };
+
+  VerifyUserDetails();
+}, []);
 
 
 
@@ -56,7 +63,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
             setToken(newToken);
             setUser(userData);
             setUserDetails(user_details);
-            setShowDetailsModal(show_details_modal);
+          
             return userData;
         } catch (error) {
             console.error('Login failed:', error);
