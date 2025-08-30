@@ -1,7 +1,7 @@
 import axios from 'axios';
-import React, { createContext, useContext, useState } from 'react';
+import React, { createContext, useContext, useEffect, useState } from 'react';
 import type { ReactNode } from 'react';
-import type { User, AuthContextType, UserDetails } from "../../Utils/PropsInterface";
+import type { User, AuthContextType, UserDetails, Profile } from "../../Utils/PropsInterface";
 
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -12,6 +12,28 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     const [isLoading, setIsLoading] = useState(true);
     const [userDetails, setUserDetails] = useState<UserDetails | null>(null);
     const [showDetailsModal, setShowDetailsModal] = useState(false);
+    const [userProfile, setUserProfile] = useState<Profile | null>();
+
+    useEffect(() => {
+        const VerifyUserDetails = async () => {
+            const response = await axios.get('http://127.0.0.1:8000/api/profile', {
+                headers: {
+                    Authorization: `Bearer ${localStorage.getItem("token")}`,
+                },
+            });
+            console.log(response.data);
+            setUserProfile(response.data);
+            if (response.data.avatar == null) {
+                console.log("Ok");
+            }
+            else {
+
+            }
+        };
+
+        VerifyUserDetails();
+    }, []);
+
 
 
 
