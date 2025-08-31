@@ -3,13 +3,24 @@ import { useEffect, useState } from "react";
 import type { Post } from "../../../../Utils/PropsInterface";
 import LoadingBanner from "./Banners/LoadingBanner";
 import SkeletonPost from "./Banners/SkeletonPost";
-
-
+import ClaimModel, { type ClaimModalProps } from "../CommonComponents/ClaimModel";
 
 function UserPosts() {
   const [posts, setPosts] = useState<Post[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [claimModal, setClaimModal] = useState(false);
+  const [selectedPost, setSelectedPost] = useState<Post | null>(null);
+
+  const openClaimModal = (post: Post) => {
+    setSelectedPost(post);
+    setClaimModal(true);
+  }
+
+  const closeClaimModal = () => {
+    setClaimModal(false);
+    setSelectedPost(null);
+  }
 
   useEffect(() => {
     const fetchPosts = async () => {
@@ -38,6 +49,7 @@ function UserPosts() {
 
   if (error) return <p className="text-center text-red-500 py-8">{error}</p>;
   if (posts.length === 0) return <p className="text-center">No posts available</p>;
+
   return (
     <div>
       <div className="bg-white rounded-xl shadow-sm p-6 mb-6">
@@ -118,12 +130,20 @@ function UserPosts() {
               <span>💬</span>
               <span>2</span>
             </button>
-            <button className="flex p-2 rounded-lg  bg-[#1a2d57] text-sm text-white items-center space-x-1">
+            <button
+              onClick={() => openClaimModal(post)}
+              className="flex p-2 rounded-lg bg-[#1a2d57] text-sm text-white items-center space-x-1"
+            >
               <span>Claim this</span>
             </button>
           </div>
         </div>
       ))}
+      <ClaimModel
+        postDetails={selectedPost as ClaimModalProps["postDetails"]}
+        isOpen={claimModal}
+        onClose={closeClaimModal}
+      />
     </div>
   );
 }

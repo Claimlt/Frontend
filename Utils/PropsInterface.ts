@@ -31,8 +31,10 @@ export interface AuthContextType {
   isLoading: boolean;
   showDetailsModal: boolean;
   setShowDetailsModal: (show: boolean) => void;
- }
- export interface Image {
+  userProfile: any; 
+  updateUserProfile: (profileData: any) => void; 
+}
+export interface Image {
   id: string;
   filename: string;
   url: string;
@@ -40,7 +42,7 @@ export interface AuthContextType {
   updated_at: string;
 }
 
- export  interface Post {
+export interface Post {
   id: string;
   title: string;
   description: string;
@@ -50,4 +52,16 @@ export interface AuthContextType {
   images: Image[];
   likes_count?: number;
   comments_count?: number;
+}
+export interface Profile {
+  id: string;
+  first_name: string;
+  last_name: string;
+  email: string;
+  role: "user" | "admin"; 
+  status: "pending" | "active" | "banned"; 
+  contact_number: string;
+  created_at: string; 
+  updated_at: string;
+  avatar: string | null; 
 }
