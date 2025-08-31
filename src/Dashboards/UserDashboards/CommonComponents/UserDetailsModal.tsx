@@ -25,8 +25,6 @@ const UserDetailsModal = ({ onClose, onUpdate }: UserDetailsModalProps) => {
     const [uploadError, setUploadError] = useState<string | null>(null);
     const fileInputRef = useRef<HTMLInputElement>(null);
 
-    console.log(userProfile, "user Profile");
-
     const handleClose = () => {
         setShowDetailsModal(false);
         onClose();
