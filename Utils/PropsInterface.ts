@@ -31,6 +31,8 @@ export interface AuthContextType {
   isLoading: boolean;
   showDetailsModal: boolean;
   setShowDetailsModal: (show: boolean) => void;
+  userProfile: any; 
+  updateUserProfile: (profileData: any) => void; 
 }
 export interface Image {
   id: string;

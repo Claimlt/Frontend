@@ -1,7 +1,7 @@
 import axios from 'axios';
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import type { ReactNode } from 'react';
-import type { User, AuthContextType, UserDetails, Profile } from "../../Utils/PropsInterface";
+import type { User, AuthContextType, UserDetails, Profile} from "../../Utils/PropsInterface";
 
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -14,34 +14,32 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     const [showDetailsModal, setShowDetailsModal] = useState(false);
     const [userProfile, setUserProfile] = useState<Profile | null>();
 
-  useEffect(() => {
-  const VerifyUserDetails = async () => {
-    try {
-      const response = await axios.get<Profile>(
-        "http://127.0.0.1:8000/api/profile",
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-        }
-      );
+    useEffect(() => {
+        const VerifyUserDetails = async () => {
+            try {
+                const response = await axios.get<Profile>(
+                    "http://127.0.0.1:8000/api/profile",
+                    {
+                        headers: {
+                            Authorization: `Bearer ${localStorage.getItem("token")}`,
+                        },
+                    }
+                );
 
-      setUserProfile(response.data);
+                setUserProfile(response.data);
 
-      if (response.data.avatar == null) {
-        setShowDetailsModal(true); 
-      }
-    } catch (error) {
-      console.error("Error fetching profile:", error);
-    } finally {
-      setIsLoading(false); 
-    }
-  };
+                if (response.data.avatar == null) {
+                    setShowDetailsModal(true);
+                }
+            } catch (error) {
+                console.error("Error fetching profile:", error);
+            } finally {
+                setIsLoading(false);
+            }
+        };
 
-  VerifyUserDetails();
-}, []);
-
-
+        VerifyUserDetails();
+    }, []);
 
 
     const login = async (email: string, password: string) => {
@@ -51,7 +49,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
                 password
             });
 
-            const { token: newToken, user: userData, user_details, show_details_modal } = response.data;
+            const { token: newToken, user: userData, user_details } = response.data;
 
             localStorage.setItem('token', newToken);
             localStorage.setItem(
@@ -63,14 +61,16 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
             setToken(newToken);
             setUser(userData);
             setUserDetails(user_details);
-          
+
             return userData;
         } catch (error) {
             console.error('Login failed:', error);
             throw error;
         }
     };
-
+    const updateUserProfile = (profile: Profile) => {
+        setUserProfile(profile);
+    };
     return (
         <AuthContext.Provider value={{
             user,
@@ -79,7 +79,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
             login,
             isLoading,
             showDetailsModal, setShowDetailsModal,
-
+            userProfile, updateUserProfile
         }}>
             {children}
         </AuthContext.Provider>

@@ -52,7 +52,7 @@ function MakePost({ isOpen, onClose, onPostCreated }: MakePostProps) {
       for (const image of selectedImages) {
         try {
           const imageId = await uploadImage(image.file);
-          imageIds.push(imageId); 
+          imageIds.push(imageId);
         } catch (err) {
           console.error('Error uploading image:', err);
         }
@@ -226,11 +226,10 @@ function MakePost({ isOpen, onClose, onPostCreated }: MakePostProps) {
             <button
               type="submit"
               disabled={(!postTitle.trim() && !postContent.trim() && selectedImages.length === 0) || isUploading}
-              className={`px-6 py-2.5 rounded-lg font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 ${
-                (!postTitle.trim() && !postContent.trim() && selectedImages.length === 0) || isUploading
-                  ? 'bg-gray-200 text-gray-500 cursor-not-allowed focus:ring-gray-300'
-                  : 'bg-blue-600 hover:bg-blue-700 text-white focus:ring-blue-500'
-              }`}
+              className={`px-6 py-2.5 rounded-lg font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 ${(!postTitle.trim() && !postContent.trim() && selectedImages.length === 0) || isUploading
+                ? 'bg-gray-200 text-gray-500 cursor-not-allowed focus:ring-gray-300'
+                : 'bg-blue-600 hover:bg-blue-700 text-white focus:ring-blue-500'
+                }`}
             >
               {isUploading ? 'Posting...' : 'Post Found Item'}
             </button>
