@@ -15,14 +15,70 @@ import { Link } from "react-router-dom";
 import { useAuth } from "../../../Context/Authcontext";
 import MakePost from "./MakePost";
 
+// Define interface for profile data
+interface Avatar {
+  id: string;
+  filename: string;
+  url: string;
+  created_at: string;
+  updated_at: string;
+}
+
+interface ProfileData {
+  id: string;
+  first_name: string;
+  last_name: string;
+  email: string;
+  email_verified_at: string | null;
+  role: string;
+  status: string;
+  contact_number: string;
+  created_at: string;
+  updated_at: string;
+  avatar: Avatar;
+}
+
 function Navbar() {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [profileData, setProfileData] = useState<ProfileData | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [avatarError, setAvatarError] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
-  const { user } = useAuth();
+  const { user, userProfile } = useAuth();
   const storedName = localStorage.getItem("user");
 
+  const fetchProfileData = async () => {
+    try {
+      setLoading(true);
+      const token = localStorage.getItem("token");
+      
+      if (!token) {
+        setError("No authentication token found");
+        setLoading(false);
+        return;
+      }
+
+      const response = await axios.get("http://127.0.0.1:8000/api/profile", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      setProfileData(response.data.data);
+      setError(null);
+    } catch (err: any) {
+      console.error("Error fetching profile data:", err);
+      setError(err.response?.data?.message || "Failed to fetch profile data");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
+    fetchProfileData();
+    
     function handleClickOutside(event: MouseEvent) {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
         setIsDropdownOpen(false);
@@ -52,13 +108,16 @@ function Navbar() {
     setIsDropdownOpen(false);
   };
 
-  const handlePostSubmit = (content: string, privacy: string) => {
-    console.log('New post:', content, 'Privacy:', privacy);
-
-  };
   const handleModelOpen = () => {
     setIsModalOpen(!isModalOpen);
   }
+
+  const handleImageError = () => {
+    setAvatarError(true);
+  }
+
+  const displayUser = profileData || user;
+  const displayAvatar = profileData?.avatar || userProfile?.avatar;
 
   return (
     <nav className="bg-[#1a2d57] text-white p-4 fixed w-full top-0 z-10 shadow-md">
@@ -107,19 +166,28 @@ function Navbar() {
             >
               <div className="flex items-center space-x-2">
                 <div className="w-8 h-8 rounded-full overflow-hidden border-2 border-[#3a63b8]">
-                  <img
-                    src="/MyProfile.jpg"
-                    alt="Profile"
-                    className="w-full h-full object-cover"
-                  />
+                  {loading ? (
+                    <div className="w-full h-full bg-gray-600 animate-pulse"></div>
+                  ) : displayAvatar && !avatarError ? (
+                    <img
+                      src={displayAvatar.url} 
+                      alt="Profile"
+                      className="w-full h-full object-cover"
+                      onError={handleImageError}
+                    />
+                  ) : (
+                    <div className="w-full h-full bg-gray-600 flex items-center justify-center">
+                      <FaUser className="text-white" />
+                    </div>
+                  )}
                 </div>
-                {(user || storedName) && (
+                {(displayUser || storedName) && (
                   <div className="hidden md:flex flex-col items-start">
                     <span className="text-sm font-medium whitespace-nowrap">
-                      {user ? `${user.first_name} ${user.last_name}` : storedName}
+                      {displayUser ? `${displayUser.first_name} ${displayUser.last_name}` : storedName}
                     </span>
                     <span className="text-xs text-gray-300">
-                      @{user ? user.first_name?.toLowerCase() : storedName?.split(" ")[0]?.toLowerCase()}
+                      @{displayUser ? displayUser.first_name?.toLowerCase() : storedName?.split(" ")[0]?.toLowerCase()}
                     </span>
                   </div>
                 )}
@@ -132,20 +200,27 @@ function Navbar() {
             {isDropdownOpen && (
               <div className="absolute right-0 mt-2 w-56 bg-[#1a2d57] rounded-md shadow-lg py-2 z-20 border border-[#3a63b8]">
                 <div className="px-4 py-3 border-b border-gray-700">
-                  {user && (
+                  {displayUser && (
                     <div className="flex items-center space-x-3">
-                      <div className="w-10 h-10 rounded-full overflow-hidden border-2 border-[#3a63b8]">
-                        <img
-                          src="/MyProfile.jpg"
-                          alt="Profile"
-                          className="w-full h-full object-cover"
-                        />
+                      <div className="w-8 h-8 rounded-full overflow-hidden border-2 border-[#3a63b8]">
+                        {displayAvatar && !avatarError ? (
+                          <img
+                            src={displayAvatar.url} 
+                            alt="Profile"
+                            className="w-full h-full object-cover"
+                            onError={handleImageError}
+                          />
+                        ) : (
+                          <div className="w-full h-full bg-gray-600 flex items-center justify-center">
+                            <FaUser className="text-white" />
+                          </div>
+                        )}
                       </div>
                       <div className="flex flex-col">
                         <span className="text-sm font-medium">
-                          {user.first_name} {user.last_name}
+                          {displayUser.first_name} {displayUser.last_name}
                         </span>
-                        <span className="text-xs text-gray-300">{user.email}</span>
+                        <span className="text-xs text-gray-300">{displayUser.email}</span>
                       </div>
                     </div>
                   )}
@@ -161,7 +236,7 @@ function Navbar() {
                     Profile
                   </Link>
                   <Link
-                    to="/settings"
+                    to="settings"
                     className="flex items-center px-4 py-2 text-sm text-white hover:bg-[#3a63b8] transition-colors"
                     onClick={() => setIsDropdownOpen(false)}
                   >

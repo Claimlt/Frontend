@@ -4,7 +4,7 @@ import axios from 'axios';
 
 interface UserDetailsModalProps {
     onClose: () => void;
-    onUpdate: () => void;
+    onUpdate?: () => void; // Made optional with ?
 }
 
 interface ImageUploadResponse {
@@ -17,7 +17,7 @@ interface ImageUploadResponse {
 }
 
 const UserDetailsModal = ({ onClose, onUpdate }: UserDetailsModalProps) => {
-    const { user, setShowDetailsModal, userProfile, updateUserProfile } = useAuth();
+    const { setShowDetailsModal, updateUserProfile } = useAuth();
     const [profileImage, setProfileImage] = useState<File | null>(null);
     const [previewUrl, setPreviewUrl] = useState<string | null>(null);
     const [isDragging, setIsDragging] = useState(false);
@@ -129,10 +129,7 @@ const UserDetailsModal = ({ onClose, onUpdate }: UserDetailsModalProps) => {
 
     const updateProfile = async (avatarId: string) => {
         try {
-            const response = await axios.post('http://127.0.0.1:8000/api/update', {
-                first_name: userProfile?.first_name,
-                last_name: userProfile?.last_name,
-                contact_number: userProfile?.contact_number,
+            const response = await axios.post('http://127.0.0.1:8000/api/profile-avatar', {
                 avatar: avatarId,
             }, {
                 headers: {
@@ -141,7 +138,6 @@ const UserDetailsModal = ({ onClose, onUpdate }: UserDetailsModalProps) => {
                     Authorization: `Bearer ${localStorage.getItem("token")}`,
                 },
             });
-
             return response.data;
         } catch (error) {
             let errorMessage = 'Failed to update profile. Please try again.';
@@ -154,7 +150,7 @@ const UserDetailsModal = ({ onClose, onUpdate }: UserDetailsModalProps) => {
                     errorMessage = Object.values(errors).flat().join(' ');
                 }
             }
-
+            setShowDetailsModal(false);
             setUploadError(errorMessage);
             console.error('Profile update error:', error);
             throw error;
@@ -171,7 +167,10 @@ const UserDetailsModal = ({ onClose, onUpdate }: UserDetailsModalProps) => {
         try {
             const updatedProfile = await updateProfile(avatarId);
             updateUserProfile(updatedProfile);
-            onUpdate();
+            if (typeof onUpdate === 'function') {
+                onUpdate();
+            }
+            
             handleClose();
         } catch (error) {
             console.error(error);

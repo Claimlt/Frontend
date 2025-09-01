@@ -1,7 +1,7 @@
 import axios from 'axios';
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import type { ReactNode } from 'react';
-import type { User, AuthContextType, UserDetails, Profile} from "../../Utils/PropsInterface";
+import type { User, AuthContextType, UserDetails, Profile } from "../../Utils/PropsInterface";
 
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -25,11 +25,12 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
                         },
                     }
                 );
-
                 setUserProfile(response.data);
-
-                if (response.data.avatar == null) {
+                if (response.data.data.avatar === null) {
                     setShowDetailsModal(true);
+                }
+                else if (response.data.data.avatar !== null) {
+                    setShowDetailsModal(false);
                 }
             } catch (error) {
                 console.error("Error fetching profile:", error);
@@ -38,8 +39,9 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
             }
         };
 
-        VerifyUserDetails();
+        VerifyUserDetails()
     }, []);
+
 
 
     const login = async (email: string, password: string) => {
