@@ -1,7 +1,7 @@
 import axios from 'axios';
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import type { ReactNode } from 'react';
-import type { User, AuthContextType, UserDetails, Profile} from "../../Utils/PropsInterface";
+import type { User, AuthContextType, UserDetails, Profile } from "../../Utils/PropsInterface";
 
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -13,8 +13,34 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     const [userDetails, setUserDetails] = useState<UserDetails | null>(null);
     const [showDetailsModal, setShowDetailsModal] = useState(false);
     const [userProfile, setUserProfile] = useState<Profile | null>();
-
+    const [avatar, setAvatar] = useState<Profile | null>();
     useEffect(() => {
+        const verifyProfileAvtar = async () => {
+            try {
+                const response = await axios.post(
+                    "http://127.0.0.1:8000/api/profile-avatar",
+                    {},
+                    {
+                        headers: {
+                            Authorization: `Bearer ${localStorage.getItem("token")}`,
+                        },
+                    }
+                );
+
+                setAvatar(response.data);
+
+                if (response.data.user.avatar === null) {
+                    setShowDetailsModal(true);
+                } else if (response.data.user.avatar != null) {
+                    setShowDetailsModal(false);
+                }
+
+                console.log("Profile Avatar", response.data);
+            } catch (error) {
+                console.error("Error fetching profile:", error);
+            }
+
+        }
         const VerifyUserDetails = async () => {
             try {
                 const response = await axios.get<Profile>(
@@ -27,10 +53,6 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
                 );
 
                 setUserProfile(response.data);
-
-                if (response.data.avatar == null) {
-                    setShowDetailsModal(true);
-                }
             } catch (error) {
                 console.error("Error fetching profile:", error);
             } finally {
@@ -38,8 +60,9 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
             }
         };
 
-        VerifyUserDetails();
+        VerifyUserDetails(), verifyProfileAvtar()
     }, []);
+
 
 
     const login = async (email: string, password: string) => {
