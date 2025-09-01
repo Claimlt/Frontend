@@ -4,7 +4,7 @@ import axios from 'axios';
 
 interface UserDetailsModalProps {
     onClose: () => void;
-    onUpdate: () => void;
+    onUpdate?: () => void; // Made optional with ?
 }
 
 interface ImageUploadResponse {
@@ -137,7 +137,6 @@ const UserDetailsModal = ({ onClose, onUpdate }: UserDetailsModalProps) => {
                     'Accept': 'application/json',
                     Authorization: `Bearer ${localStorage.getItem("token")}`,
                 },
-
             });
             return response.data;
         } catch (error) {
@@ -168,7 +167,10 @@ const UserDetailsModal = ({ onClose, onUpdate }: UserDetailsModalProps) => {
         try {
             const updatedProfile = await updateProfile(avatarId);
             updateUserProfile(updatedProfile);
-            onUpdate();
+            if (typeof onUpdate === 'function') {
+                onUpdate();
+            }
+            
             handleClose();
         } catch (error) {
             console.error(error);

@@ -54,6 +54,7 @@ export interface Post {
   comments_count?: number;
 }
 export interface Profile {
+  data: any;
   id: string;
   first_name: string;
   last_name: string;
@@ -64,4 +65,25 @@ export interface Profile {
   created_at: string; 
   updated_at: string;
   avatar: string | null; 
+}
+export interface Avatar {
+  id: string;
+  filename: string;
+  url: string;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface ProfileData {
+  id: string;
+  first_name: string;
+  last_name: string;
+  email: string;
+  email_verified_at: string | null;
+  role: string;
+  status: string;
+  contact_number: string;
+  created_at: string;
+  updated_at: string;
+  avatar: Avatar | null;
 }
