@@ -19,7 +19,7 @@ function Navbar() {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
-  const { user } = useAuth();
+  const { user , avatar } = useAuth();
   const storedName = localStorage.getItem("user");
 
   useEffect(() => {
@@ -161,7 +161,7 @@ function Navbar() {
                     Profile
                   </Link>
                   <Link
-                    to="/settings"
+                    to="settings"
                     className="flex items-center px-4 py-2 text-sm text-white hover:bg-[#3a63b8] transition-colors"
                     onClick={() => setIsDropdownOpen(false)}
                   >
