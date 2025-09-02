@@ -3,7 +3,6 @@ import React, { createContext, useContext, useEffect, useState } from 'react';
 import type { ReactNode } from 'react';
 import type { User, AuthContextType, UserDetails, Profile } from "../../Utils/PropsInterface";
 
-
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
@@ -12,26 +11,27 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     const [isLoading, setIsLoading] = useState(true);
     const [userDetails, setUserDetails] = useState<UserDetails | null>(null);
     const [showDetailsModal, setShowDetailsModal] = useState(false);
-    const [userProfile, setUserProfile] = useState<Profile | null>();
+    const [userProfile, setUserProfile] = useState<Profile | null>(null);
 
     useEffect(() => {
+        if (!token) {
+            setIsLoading(false);
+            return;
+        }
+
         const VerifyUserDetails = async () => {
             try {
                 const response = await axios.get<Profile>(
                     "http://127.0.0.1:8000/api/profile",
                     {
                         headers: {
-                            Authorization: `Bearer ${localStorage.getItem("token")}`,
+                            Authorization: `Bearer ${token}`,
                         },
                     }
                 );
+
                 setUserProfile(response.data);
-                if (response.data.data.avatar === null) {
-                    setShowDetailsModal(true);
-                }
-                else if (response.data.data.avatar !== null) {
-                    setShowDetailsModal(false);
-                }
+                setShowDetailsModal(response.data.data.avatar === null);
             } catch (error) {
                 console.error("Error fetching profile:", error);
             } finally {
@@ -39,11 +39,10 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
             }
         };
 
-        VerifyUserDetails()
-    }, []);
+        VerifyUserDetails();
+    }, [token]);
 
-
-
+    // 🔹 Login function
     const login = async (email: string, password: string) => {
         try {
             const response = await axios.post('http://127.0.0.1:8000/api/login', {
@@ -57,12 +56,28 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
             localStorage.setItem(
                 "user",
                 userData.first_name && userData.last_name
-                    ? userData.first_name + " " + userData.last_name
+                    ? `${userData.first_name} ${userData.last_name}`
                     : userData.email
             );
+
             setToken(newToken);
             setUser(userData);
             setUserDetails(user_details);
+
+            try {
+                const profileResponse = await axios.get<Profile>(
+                    "http://127.0.0.1:8000/api/profile",
+                    {
+                        headers: {
+                            Authorization: `Bearer ${newToken}`,
+                        },
+                    }
+                );
+                setUserProfile(profileResponse.data);
+                setShowDetailsModal(profileResponse.data.data.avatar === null);
+            } catch (profileError) {
+                console.error("Error fetching profile after login:", profileError);
+            }
 
             return userData;
         } catch (error) {
@@ -70,9 +85,11 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
             throw error;
         }
     };
+
     const updateUserProfile = (profile: Profile) => {
         setUserProfile(profile);
     };
+
     return (
         <AuthContext.Provider value={{
             user,
@@ -80,8 +97,10 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
             token,
             login,
             isLoading,
-            showDetailsModal, setShowDetailsModal,
-            userProfile, updateUserProfile
+            showDetailsModal,
+            setShowDetailsModal,
+            userProfile,
+            updateUserProfile
         }}>
             {children}
         </AuthContext.Provider>

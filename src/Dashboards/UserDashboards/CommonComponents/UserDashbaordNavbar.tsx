@@ -48,7 +48,7 @@ function Navbar() {
   const dropdownRef = useRef<HTMLDivElement>(null);
   const { user, userProfile } = useAuth();
   const storedName = localStorage.getItem("user");
-
+console.log(userProfile)
   const fetchProfileData = async () => {
     try {
       setLoading(true);
@@ -118,7 +118,6 @@ function Navbar() {
 
   const displayUser = profileData || user;
   const displayAvatar = profileData?.avatar || userProfile?.avatar;
-
   return (
     <nav className="bg-[#1a2d57] text-white p-4 fixed w-full top-0 z-10 shadow-md">
       <div className="container mx-auto flex items-center justify-between">
