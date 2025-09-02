@@ -1,7 +1,24 @@
-import React, { useState, useEffect } from 'react';
+import axios from 'axios';
+import { useState, useEffect } from 'react';
+
+interface Avatar {
+    id: string;
+    filename: string;
+    url: string;
+    created_at: string;
+    updated_at: string;
+}
+
+interface User {
+    first_name: string;
+    last_name: string;
+    email: string;
+    contact_number: string;
+    avatar: Avatar | null;
+}
 
 const ProfileDetails = () => {
-    const [user, setUser] = useState({
+    const [user, setUser] = useState<User>({
         first_name: '',
         last_name: '',
         email: '',
@@ -16,27 +33,22 @@ const ProfileDetails = () => {
     useEffect(() => {
         const fetchProfile = async () => {
             try {
-                const response = await fetch('http://127.0.0.1:8000/api/profile', {
+                const response = await axios.get('http://127.0.0.1:8000/api/profile', {
                     headers: {
                         'Authorization': `Bearer ${localStorage.getItem('token')}`,
                         'Content-Type': 'application/json',
                     },
                 });
-
-                if (!response.ok) {
-                    throw new Error('Failed to fetch profile data');
-                }
-
-                const data = await response.json();
+                const userData = response.data.data;
                 setUser({
-                    first_name: data.user.first_name,
-                    last_name: data.user.last_name,
-                    email: data.user.email,
-                    contact_number: data.user.contact_number,
-                    avatar: data.user.avatar
+                    first_name: userData.first_name,
+                    last_name: userData.last_name,
+                    email: userData.email,
+                    contact_number: userData.contact_number,
+                    avatar: userData.avatar
                 });
                 setLoading(false);
-            } catch (err) {
+            } catch (err: any) {
                 setError(err.message);
                 setLoading(false);
             }
@@ -45,8 +57,7 @@ const ProfileDetails = () => {
         fetchProfile();
     }, []);
 
-    // Handle input changes
-    const handleChange = (e) => {
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
         setUser(prevUser => ({
             ...prevUser,
@@ -54,32 +65,34 @@ const ProfileDetails = () => {
         }));
     };
 
-    // Handle form submission
-    const handleSubmit = async (e) => {
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setSaving(true);
         setMessage('');
         setError('');
 
         try {
-            const response = await fetch('http://127.0.0.1:8000/api/profile', {
-                method: 'PUT',
+            const updateData = {
+                first_name: user.first_name,
+                last_name: user.last_name,
+                contact_number: user.contact_number,
+            };
+
+            const response = await axios.put('http://127.0.0.1:8000/api/profile', updateData, {
                 headers: {
                     'Authorization': `Bearer ${localStorage.getItem('token')}`,
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify(user),
             });
 
-            if (!response.ok) {
-                throw new Error('Failed to update profile');
-            }
-
-            const data = await response.json();
             setMessage('Profile updated successfully!');
-            setUser(data.user);
-        } catch (err) {
-            setError(err.message);
+            if (response.data.data) {
+                setUser(response.data.data);
+            } else {
+                setUser(response.data);
+            }
+        } catch (err: any) {
+            setError(err.response?.data?.message || err.message);
         } finally {
             setSaving(false);
         }
@@ -103,7 +116,7 @@ const ProfileDetails = () => {
                                 <div className="relative">
                                     {user.avatar ? (
                                         <img
-                                            src={`http://127.0.0.1:8000/storage/${user.avatar.filename}`}
+                                            src={user.avatar.url}
                                             alt="Profile"
                                             className="w-32 h-32 rounded-full object-cover border-4 border-white shadow-lg"
                                         />
@@ -188,9 +201,9 @@ const ProfileDetails = () => {
                                         onChange={handleChange}
                                         className="block w-full border border-gray-300 rounded-lg shadow-sm py-2 px-3 focus:outline-none focus:ring-2 focus:ring-[#1a2d57] focus:border-[#1a2d57] sm:text-sm"
                                         required
+                                        disabled
                                     />
                                 </div>
-
                             </div>
 
                             <div>
