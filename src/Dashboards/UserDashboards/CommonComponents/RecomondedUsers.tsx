@@ -3,7 +3,7 @@
 function RecomondedUsers() {
   return (
     <div>
-         <div className="bg-white rounded-xl shadow-sm p-6">
+         <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
             <h3 className="font-semibold mb-4">Suggestions For You</h3>
             {[1, 2, 3].map(item => (
               <div key={item} className="flex items-center justify-between mb-4 last:mb-0">
