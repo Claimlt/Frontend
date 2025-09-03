@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useAuth } from "../../../Context/Authcontext";
 import axios from "axios";
 import type { ProfileData } from "../../../../Utils/PropsInterface";
+import { Link } from "react-router-dom";
 
 
 function UserDetails() {
@@ -15,7 +16,7 @@ function UserDetails() {
     try {
       setLoading(true);
       const token = localStorage.getItem("token");
-      
+
       if (!token) {
         setError("No authentication token found");
         setLoading(false);
@@ -64,10 +65,10 @@ function UserDetails() {
 
   if (error) {
     return (
-      <div className="bg-white rounded-xl shadow-sm p-6 mb-6">
+      <div className="bg-white rounded-xl shadow-sm p-6 mb-6 ">
         <div className="text-center text-red-500 py-4">
           <p>Error: {error}</p>
-          <button 
+          <button
             onClick={fetchProfileData}
             className="mt-2 px-4 py-2 bg-[#3a63b8] text-white rounded hover:bg-[#2c4a8a]"
           >
@@ -80,7 +81,7 @@ function UserDetails() {
 
   return (
     <div>
-      <div className="bg-white rounded-xl shadow-sm p-6 mb-6">
+      <div className="bg-white rounded-xl shadow-sm p-6 mb-6 border border-gray-100">
         <div className="flex items-center space-x-4 mb-6">
           <div className="w-16 h-16 rounded-full overflow-hidden border-2 border-[#3a63b8]">
             {displayAvatar?.url ? (
@@ -125,9 +126,12 @@ function UserDetails() {
           </div>
         </div>
 
-        <button className="w-full bg-[#3a63b8] text-white py-2 rounded-lg font-medium hover:bg-[#2c4a8a] transition">
-          Edit Profile
-        </button>
+        <Link to='settings'>
+          <button className="w-full bg-[#3a63b8] text-white py-2 rounded-lg font-medium hover:bg-[#2c4a8a] transition">
+            Edit Profile
+          </button>
+        </Link>
+
       </div>
     </div>
   );

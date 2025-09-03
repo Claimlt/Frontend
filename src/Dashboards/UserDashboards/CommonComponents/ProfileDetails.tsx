@@ -240,12 +240,6 @@ const ProfileDetails = () => {
                             </div>
                         </form>
                     </div>
-
-                    <div className="px-6 py-4 bg-gray-50 border-t border-gray-100">
-                        <div className="text-xs text-gray-500">
-                            <p>Note: Your email verification status is pending. Check your inbox for a verification link.</p>
-                        </div>
-                    </div>
                 </div>
             </div>
         </div>

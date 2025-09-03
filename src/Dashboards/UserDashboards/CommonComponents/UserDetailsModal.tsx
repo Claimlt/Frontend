@@ -4,7 +4,7 @@ import axios from 'axios';
 
 interface UserDetailsModalProps {
     onClose: () => void;
-    onUpdate?: () => void; // Made optional with ?
+    onUpdate?: () => void; 
 }
 
 interface ImageUploadResponse {
