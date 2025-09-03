@@ -4,6 +4,7 @@ import type { Post } from "../../../../Utils/PropsInterface";
 import LoadingBanner from "./Banners/LoadingBanner";
 import SkeletonPost from "./Banners/SkeletonPost";
 import ClaimModel, { type ClaimModalProps } from "../CommonComponents/ClaimModel";
+import MakePost from "../CommonComponents/MakePost";
 
 function UserPosts() {
   const [posts, setPosts] = useState<Post[]>([]);
@@ -12,6 +13,7 @@ function UserPosts() {
   const [claimModal, setClaimModal] = useState(false);
   const [selectedPost, setSelectedPost] = useState<Post | null>(null);
   const [allprofiles, setAllProfiles] = useState<any[]>([]);
+  const [isMakePostOpen, setIsMakePostOpen] = useState(false);
 
   const openClaimModal = (post: Post) => {
     setSelectedPost(post);
@@ -21,6 +23,30 @@ function UserPosts() {
   const closeClaimModal = () => {
     setClaimModal(false);
     setSelectedPost(null);
+  }
+
+  const openMakePostModal = () => {
+    setIsMakePostOpen(true);
+  }
+
+  const closeMakePostModal = () => {
+    setIsMakePostOpen(false);
+  }
+
+  const handlePostCreated = () => {
+    const fetchPosts = async () => {
+      try {
+        const response = await axios.get("http://127.0.0.1:8000/api/posts", {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        });
+        setPosts(response.data.data);
+      } catch (err) {
+        setError("Failed to fetch posts");
+      }
+    };
+    fetchPosts();
   }
   
   const token = localStorage.getItem("token");
@@ -82,6 +108,12 @@ function UserPosts() {
           </svg>
         </div>
         <p className="text-gray-600">No posts available</p>
+        <button
+          onClick={openMakePostModal}
+          className="mt-4 px-6 py-2 bg-[#1a2d57] text-white rounded-xl font-medium hover:bg-[#152547] transition-colors"
+        >
+          Create First Post
+        </button>
       </div>
     </div>
   );
@@ -89,7 +121,7 @@ function UserPosts() {
   return (
     <div className="w-full mx-auto px-4 pb-8">
       <div className="bg-white rounded-2xl shadow-sm p-5 mb-6 border border-gray-100">
-        <div className="flex space-x-5  overflow-x-auto pb-2 hide-scrollbar">
+        <div className="flex space-x-5 overflow-x-auto pb-2 hide-scrollbar">
           {allprofiles.map((profile, index) => (
             <div key={index} className="flex flex-col items-center shrink-0">
               <div className="w-16 h-16 rounded-full border-2 border-[#3a63b8] p-0.5 mb-1.5">
@@ -107,7 +139,11 @@ function UserPosts() {
             </div>
           ))}
         </div>
-        <div className="flex items-center space-x-3 p-3 bg-gray-50 rounded-xl">
+        
+        <div 
+          className="flex items-center space-x-3 p-3 bg-gray-50 rounded-xl cursor-pointer hover:bg-gray-100 transition-colors"
+          onClick={openMakePostModal}
+        >
           <div className="w-9 h-9 rounded-full border border-[#1a2d57] p-0.5 flex-shrink-0">
             <div className="w-full h-full rounded-full overflow-hidden bg-white">
               <img
@@ -117,14 +153,12 @@ function UserPosts() {
               />
             </div>
           </div>
-          <input
-            type="text"
-            placeholder="What's new to report?"
-            className="flex-1 bg-white border border-gray-200 rounded-full py-2.5 px-4 text-sm focus:outline-none focus:ring-2 focus:ring-blue-100 focus:border-[#1a2d57] transition-all"
-          />
+          <div className="flex-1 bg-white border border-gray-200 rounded-full py-2.5 px-4 text-sm text-gray-500">
+            What's new to report?
+          </div>
         </div>
       </div>
- 
+
       {posts.map((post, index) => (
         <div key={index} className="bg-white rounded-2xl shadow-sm p-5 mb-6 border border-gray-100 overflow-hidden">
           <div className="flex items-center justify-between mb-4">
@@ -203,6 +237,12 @@ function UserPosts() {
         postDetails={selectedPost as ClaimModalProps["postDetails"]}
         isOpen={claimModal}
         onClose={closeClaimModal}
+      />
+      
+      <MakePost
+        isOpen={isMakePostOpen}
+        onClose={closeMakePostModal}
+        onPostCreated={handlePostCreated}
       />
       
       <style>{`
