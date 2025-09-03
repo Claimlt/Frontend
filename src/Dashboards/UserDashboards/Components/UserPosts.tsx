@@ -89,10 +89,10 @@ function UserPosts() {
   return (
     <div className="w-full mx-auto px-4 pb-8">
       <div className="bg-white rounded-2xl shadow-sm p-5 mb-6 border border-gray-100">
-        <div className="flex space-x-5 mb-4 overflow-x-auto pb-2 hide-scrollbar">
+        <div className="flex space-x-5  overflow-x-auto pb-2 hide-scrollbar">
           {allprofiles.map((profile, index) => (
             <div key={index} className="flex flex-col items-center shrink-0">
-              <div className="w-16 h-16 rounded-full border-2 border-[#1a2d57] p-0.5 mb-1.5">
+              <div className="w-16 h-16 rounded-full border-2 border-[#3a63b8] p-0.5 mb-1.5">
                 <div className="w-full h-full rounded-full overflow-hidden bg-white">
                   <img
                     src={profile.avatar?.url || "/default-avatar.png"} 
