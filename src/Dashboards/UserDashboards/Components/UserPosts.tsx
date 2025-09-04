@@ -5,8 +5,8 @@ import LoadingBanner from "./Banners/LoadingBanner";
 import SkeletonPost from "./Banners/SkeletonPost";
 import ClaimModel, { type ClaimModalProps } from "../CommonComponents/ClaimModel";
 import MakePost from "../CommonComponents/MakePost";
-import { useAuth } from "../../../Context/Authcontext";
 import ActiveUsers from "../CommonComponents/ActiveUsers";
+import { useProfile } from "../../../Context/ProfileContext";
 
 function UserPosts() {
   const [posts, setPosts] = useState<Post[]>([]);
@@ -15,8 +15,7 @@ function UserPosts() {
   const [claimModal, setClaimModal] = useState(false);
   const [selectedPost, setSelectedPost] = useState<Post | null>(null);
   const [isMakePostOpen, setIsMakePostOpen] = useState(false);
-  const { user } = useAuth();
-  console.log("user", user)
+  const { profileData } = useProfile();
   const openClaimModal = (post: Post) => {
     setSelectedPost(post);
     setClaimModal(true);
@@ -117,7 +116,7 @@ function UserPosts() {
           <div className="w-9 h-9 rounded-full border border-[#1a2d57] p-0.5 flex-shrink-0">
             <div className="w-full h-full rounded-full overflow-hidden bg-white">
               <img
-                src="/pasindu.jpg"
+                src={profileData?.avatar?.url || "/default-avatar.png"}
                 alt="user profile"
                 className="w-full h-full object-cover"
               />
