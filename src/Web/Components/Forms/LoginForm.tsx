@@ -1,9 +1,10 @@
 import { type ChangeEvent, type FormEvent, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import type { LoginFormProps } from "../../../../Utils/Registration.ts";
-import { validateLoginForm } from "../../../../Utils/validateForm.tsx";
+
 import { useAuth } from "../../../Context/Authcontext.tsx";
 import { useNavigate } from "react-router-dom";
+import { validateLoginForm } from "./validateForm.tsx";
 
 function LoginForm({ isOpen, onClose, onSwitchToSignup }: LoginFormProps) {
     const [formData, setFormData] = useState({

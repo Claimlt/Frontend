@@ -41,6 +41,24 @@ export interface Image {
   created_at: string;
   updated_at: string;
 }
+export interface Avatar {
+  id: string;
+  filename: string;
+  url: string;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface User {
+  id: string;
+  first_name: string;
+  last_name: string;
+  email: string;
+  status: string;
+  contact_number: string;
+  role: "admin" | "user";
+  avatar?: Avatar | null;
+}
 
 export interface Post {
   id: string;
@@ -50,6 +68,7 @@ export interface Post {
   created_at: string;
   updated_at: string;
   images: Image[];
+  user: User;
   likes_count?: number;
   comments_count?: number;
 }
@@ -59,12 +78,12 @@ export interface Profile {
   first_name: string;
   last_name: string;
   email: string;
-  role: "user" | "admin"; 
-  status: "pending" | "active" | "banned"; 
+  role: "user" | "admin";
+  status: "pending" | "active" | "banned";
   contact_number: string;
-  created_at: string; 
+  created_at: string;
   updated_at: string;
-  avatar: string | null; 
+  avatar: string | null;
 }
 export interface Avatar {
   id: string;
