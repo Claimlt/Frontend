@@ -2,7 +2,8 @@ import { type ChangeEvent, type FormEvent, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import type { FormData, FormErrors, SignupFormProps } from "../../../../Utils/Registration";
 import axios from "axios";
-import { validateForm } from "../../../../Utils/validateForm";
+import { validateForm } from "./validateForm";
+
 
 
 export function SignupForm({ isOpen, onClose, onSwitchToLogin }: SignupFormProps) {

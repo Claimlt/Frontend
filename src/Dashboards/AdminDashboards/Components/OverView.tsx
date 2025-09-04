@@ -13,6 +13,8 @@ function OverView() {
     reportedPosts: 43,
     resolvedReports: 38
   };
+
+  
   return (
     <div><div className="grid grid-cols-2 gap-6 mb-6">
       <div className="bg-white rounded-xl shadow-sm p-6">
