@@ -31,8 +31,11 @@ function RecommendedUsers() {
             Authorization: `Bearer ${token}`,
           },
         });
+        const usersOnly = (response.data.data || []).filter(
+          (user: RecommendedUser & { role?: string }) => user.role !== 'admin'
+        );
 
-        setUsers(response.data.data || []);
+        setUsers(usersOnly);
       } catch (err: any) {
         console.error("Error fetching recommended users:", err);
         setError(err.response?.data?.message || "Failed to fetch users");
@@ -137,11 +140,10 @@ function RecommendedUsers() {
           </div>
           <button
             onClick={() => handleFollow(user.id)}
-            className={`text-xs font-semibold px-3 py-1.5 rounded-lg transition-colors ${
-              following.has(user.id)
+            className={`text-xs font-semibold px-3 py-1.5 rounded-lg transition-colors ${following.has(user.id)
                 ? 'bg-gray-100 text-gray-600 hover:bg-gray-200'
                 : 'bg-[#1a2d57] text-white hover:bg-[#152547]'
-            }`}
+              }`}
           >
             {following.has(user.id) ? 'Following' : 'Follow'}
           </button>
