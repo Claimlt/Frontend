@@ -11,11 +11,13 @@ import UserPosts from "./Dashboards/UserDashboards/Components/UserPosts.tsx";
 import UserDashboard from "./Dashboards/UserDashboards/UserDashboard.tsx";
 import MainSection from "./Web/Components/MainSection.tsx";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { ProfileProvider } from "./Context/ProfileContext.tsx";
 
 function App() {
   return (
     <>
-  <AuthProvider>
+      <AuthProvider>
+        <ProfileProvider>
           <BrowserRouter>
             <Routes>
               <Route path="/" element={<MainSection />} />
@@ -33,7 +35,8 @@ function App() {
               </Route>
             </Routes>
           </BrowserRouter>
-        </AuthProvider>
+        </ProfileProvider>
+      </AuthProvider>
     </>
   );
 }

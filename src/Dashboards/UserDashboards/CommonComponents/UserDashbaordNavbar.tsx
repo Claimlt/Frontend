@@ -1,5 +1,4 @@
-import axios from "axios";
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef } from "react";
 import {
   FaHome,
   FaEnvelope,
@@ -13,83 +12,19 @@ import {
 } from "react-icons/fa";
 import { Link } from "react-router-dom";
 import { useAuth } from "../../../Context/Authcontext";
+import { useProfile } from "../../../Context/ProfileContext";
 import MakePost from "./MakePost";
-
-// Define interface for profile data
-interface Avatar {
-  id: string;
-  filename: string;
-  url: string;
-  created_at: string;
-  updated_at: string;
-}
-
-interface ProfileData {
-  id: string;
-  first_name: string;
-  last_name: string;
-  email: string;
-  email_verified_at: string | null;
-  role: string;
-  status: string;
-  contact_number: string;
-  created_at: string;
-  updated_at: string;
-  avatar: Avatar;
-}
+import axios from "axios";
 
 function Navbar() {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [profileData, setProfileData] = useState<ProfileData | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
   const [avatarError, setAvatarError] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
-  const { user, userProfile } = useAuth();
+
+  const { user } = useAuth();
+  const { profileData, loading, error } = useProfile();
   const storedName = localStorage.getItem("user");
-console.log(userProfile)
-  const fetchProfileData = async () => {
-    try {
-      setLoading(true);
-      const token = localStorage.getItem("token");
-      
-      if (!token) {
-        setError("No authentication token found");
-        setLoading(false);
-        return;
-      }
-
-      const response = await axios.get("http://127.0.0.1:8000/api/profile", {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-
-      setProfileData(response.data.data);
-      setError(null);
-    } catch (err: any) {
-      console.error("Error fetching profile data:", err);
-      setError(err.response?.data?.message || "Failed to fetch profile data");
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    fetchProfileData();
-    
-    function handleClickOutside(event: MouseEvent) {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
-        setIsDropdownOpen(false);
-      }
-    }
-
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, []);
 
   const handleSignOut = async () => {
     try {
@@ -110,14 +45,15 @@ console.log(userProfile)
 
   const handleModelOpen = () => {
     setIsModalOpen(!isModalOpen);
-  }
+  };
 
   const handleImageError = () => {
     setAvatarError(true);
-  }
+  };
 
   const displayUser = profileData || user;
-  const displayAvatar = profileData?.avatar || userProfile?.avatar;
+  const displayAvatar = profileData?.avatar;
+
   return (
     <nav className="bg-[#1a2d57] text-white p-4 fixed w-full top-0 z-10 shadow-md">
       <div className="container mx-auto flex items-center justify-between">
@@ -128,6 +64,7 @@ console.log(userProfile)
             className="w-30 h-10 rounded-full mr-2"
           />
         </div>
+
         <div className="flex-1 max-w-xl mx-4">
           <div className="relative">
             <input
@@ -140,28 +77,29 @@ console.log(userProfile)
         </div>
 
         <div className="flex items-center space-x-5">
-          <button className="relative p-2 hover:bg-[#2c4a8a] rounded-lg transition-colors" title="Home">
+          <button className="relative p-2 hover:bg-[#2c4a8a] rounded-lg" title="Home">
             <FaHome className="text-xl" />
           </button>
-          <button className="relative p-2 hover:bg-[#2c4a8a] rounded-lg transition-colors" title="Messages">
+          <button className="relative p-2 hover:bg-[#2c4a8a] rounded-lg" title="Messages">
             <FaEnvelope className="text-xl" />
           </button>
-          <button onClick={handleModelOpen} className="relative p-2 hover:bg-[#2c4a8a] rounded-lg transition-colors" title="Create">
+          <button
+            onClick={handleModelOpen}
+            className="relative p-2 hover:bg-[#2c4a8a] rounded-lg"
+            title="Create"
+          >
             <FaPlus className="text-xl" />
           </button>
-          <button className="relative p-2 hover:bg-[#2c4a8a] rounded-lg transition-colors" title="My Posts">
-            <div className="relative">
-              <Link to="user-posts" className="flex items-center">
-                <FaRegNewspaper className="text-xl" />
-              </Link>
-            </div>
+          <button className="relative p-2 hover:bg-[#2c4a8a] rounded-lg" title="My Posts">
+            <Link to="user-posts">
+              <FaRegNewspaper className="text-xl" />
+            </Link>
           </button>
+
           <div className="relative" ref={dropdownRef}>
             <button
-              className="flex items-center space-x-2 p-1 rounded-lg hover:bg-[#2c4a8a] transition-colors"
+              className="flex items-center space-x-2 p-1 rounded-lg hover:bg-[#2c4a8a]"
               onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-              aria-expanded={isDropdownOpen}
-              aria-haspopup="true"
             >
               <div className="flex items-center space-x-2">
                 <div className="w-8 h-8 rounded-full overflow-hidden border-2 border-[#3a63b8]">
@@ -169,7 +107,7 @@ console.log(userProfile)
                     <div className="w-full h-full bg-gray-600 animate-pulse"></div>
                   ) : displayAvatar && !avatarError ? (
                     <img
-                      src={displayAvatar.url} 
+                      src={displayAvatar.url}
                       alt="Profile"
                       className="w-full h-full object-cover"
                       onError={handleImageError}
@@ -183,15 +121,22 @@ console.log(userProfile)
                 {(displayUser || storedName) && (
                   <div className="hidden md:flex flex-col items-start">
                     <span className="text-sm font-medium whitespace-nowrap">
-                      {displayUser ? `${displayUser.first_name} ${displayUser.last_name}` : storedName}
+                      {displayUser
+                        ? `${displayUser.first_name} ${displayUser.last_name}`
+                        : storedName}
                     </span>
                     <span className="text-xs text-gray-300">
-                      @{displayUser ? displayUser.first_name?.toLowerCase() : storedName?.split(" ")[0]?.toLowerCase()}
+                      @
+                      {displayUser
+                        ? displayUser.first_name?.toLowerCase()
+                        : storedName?.split(" ")[0]?.toLowerCase()}
                     </span>
                   </div>
                 )}
                 <FaChevronDown
-                  className={`text-xs transition-transform ${isDropdownOpen ? 'rotate-180' : ''}`}
+                  className={`text-xs transition-transform ${
+                    isDropdownOpen ? "rotate-180" : ""
+                  }`}
                 />
               </div>
             </button>
@@ -204,7 +149,7 @@ console.log(userProfile)
                       <div className="w-8 h-8 rounded-full overflow-hidden border-2 border-[#3a63b8]">
                         {displayAvatar && !avatarError ? (
                           <img
-                            src={displayAvatar.url} 
+                            src={displayAvatar.url}
                             alt="Profile"
                             className="w-full h-full object-cover"
                             onError={handleImageError}
@@ -219,7 +164,9 @@ console.log(userProfile)
                         <span className="text-sm font-medium">
                           {displayUser.first_name} {displayUser.last_name}
                         </span>
-                        <span className="text-xs text-gray-300">{displayUser.email}</span>
+                        <span className="text-xs text-gray-300">
+                          {displayUser.email}
+                        </span>
                       </div>
                     </div>
                   )}
@@ -228,7 +175,7 @@ console.log(userProfile)
                 <div className="py-2">
                   <Link
                     to="/profile"
-                    className="flex items-center px-4 py-2 text-sm text-white hover:bg-[#3a63b8] transition-colors"
+                    className="flex items-center px-4 py-2 text-sm text-white hover:bg-[#3a63b8]"
                     onClick={() => setIsDropdownOpen(false)}
                   >
                     <FaUser className="mr-3 text-gray-300" />
@@ -236,7 +183,7 @@ console.log(userProfile)
                   </Link>
                   <Link
                     to="settings"
-                    className="flex items-center px-4 py-2 text-sm text-white hover:bg-[#3a63b8] transition-colors"
+                    className="flex items-center px-4 py-2 text-sm text-white hover:bg-[#3a63b8]"
                     onClick={() => setIsDropdownOpen(false)}
                   >
                     <FaCog className="mr-3 text-gray-300" />
@@ -248,7 +195,7 @@ console.log(userProfile)
 
                 <button
                   onClick={handleSignOut}
-                  className="flex items-center w-full px-4 py-2 text-sm text-white hover:bg-[#3a63b8] transition-colors"
+                  className="flex items-center w-full px-4 py-2 text-sm text-white hover:bg-[#3a63b8]"
                 >
                   <FaSignOutAlt className="mr-3 text-gray-300" />
                   Sign Out
@@ -256,10 +203,8 @@ console.log(userProfile)
               </div>
             )}
           </div>
-          <MakePost
-            isOpen={isModalOpen}
-            onClose={() => setIsModalOpen(false)}
-          />
+
+          <MakePost isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
         </div>
       </div>
     </nav>

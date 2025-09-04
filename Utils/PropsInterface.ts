@@ -34,6 +34,14 @@ export interface AuthContextType {
   userProfile: any;
   updateUserProfile: (profileData: any) => void;
 }
+export interface ProfileContextType {
+  profileData: ProfileData | null;
+  loading: boolean;
+  error: string | null;
+  refreshProfile: () => Promise<void>;
+  updateAvatar: (avatar: Avatar) => void;
+}
+
 export interface Image {
   id: string;
   filename: string;
