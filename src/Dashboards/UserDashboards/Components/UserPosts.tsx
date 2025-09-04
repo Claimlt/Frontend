@@ -5,6 +5,8 @@ import LoadingBanner from "./Banners/LoadingBanner";
 import SkeletonPost from "./Banners/SkeletonPost";
 import ClaimModel, { type ClaimModalProps } from "../CommonComponents/ClaimModel";
 import MakePost from "../CommonComponents/MakePost";
+import { useAuth } from "../../../Context/Authcontext";
+import ActiveUsers from "../CommonComponents/ActiveUsers";
 
 function UserPosts() {
   const [posts, setPosts] = useState<Post[]>([]);
@@ -12,9 +14,9 @@ function UserPosts() {
   const [error, setError] = useState<string | null>(null);
   const [claimModal, setClaimModal] = useState(false);
   const [selectedPost, setSelectedPost] = useState<Post | null>(null);
-  const [allprofiles, setAllProfiles] = useState<any[]>([]);
   const [isMakePostOpen, setIsMakePostOpen] = useState(false);
-
+  const { user } = useAuth();
+  console.log("user", user)
   const openClaimModal = (post: Post) => {
     setSelectedPost(post);
     setClaimModal(true);
@@ -52,18 +54,6 @@ function UserPosts() {
   const token = localStorage.getItem("token");
 
   useEffect(() => {
-    const fetchAllProfile = async () => {
-      try {
-        const response = await axios.get("http://127.0.0.1:8000/api/all-profile", {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-        setAllProfiles(response.data.data ?? []);
-      } catch (err) {
-        console.error("Error fetching profiles:", err);
-      }
-    };
 
     const fetchPosts = async () => {
       try {
@@ -79,8 +69,6 @@ function UserPosts() {
         setLoading(false);
       }
     };
-
-    fetchAllProfile();
     fetchPosts();
   }, [token]);
 
@@ -121,25 +109,7 @@ function UserPosts() {
   return (
     <div className="w-full mx-auto px-4 pb-8">
       <div className="bg-white rounded-2xl shadow-sm p-5 mb-6 border border-gray-100">
-        <div className="flex space-x-5 overflow-x-auto pb-2 hide-scrollbar">
-          {allprofiles.map((profile, index) => (
-            <div key={index} className="flex flex-col items-center shrink-0">
-              <div className="w-16 h-16 rounded-full border-2 border-[#3a63b8] p-0.5 mb-1.5">
-                <div className="w-full h-full rounded-full overflow-hidden bg-white">
-                  <img
-                    src={profile.avatar?.url || "/default-avatar.png"}
-                    alt="user profile"
-                    className="w-full h-full object-cover rounded-full"
-                  />
-                </div>
-              </div>
-              <span className="text-xs text-gray-700 font-medium truncate max-w-[64px]">
-                {profile.first_name}
-              </span>
-            </div>
-          ))}
-        </div>
-
+        <ActiveUsers />
         <div
           className="flex items-center space-x-3 p-3 bg-gray-50 rounded-xl cursor-pointer hover:bg-gray-100 transition-colors"
           onClick={openMakePostModal}
