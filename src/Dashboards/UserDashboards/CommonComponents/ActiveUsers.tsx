@@ -4,22 +4,20 @@ import { useEffect, useState } from 'react'
 function ActiveUsers() {
     const [allprofiles, setAllProfiles] = useState<any[]>([]);
     const token = localStorage.getItem('token');
-    useEffect(() => {
-        const fetchAllProfile = async () => {
-            try {
-                const response = await axios.get("http://127.0.0.1:8000/api/all-profile", {
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                    },
-                });
-                setAllProfiles(response.data.data ?? []);
-            } catch (err) {
-                console.error("Error fetching profiles:", err);
-            }
-        };
-        fetchAllProfile();
-    }
-    );
+ useEffect(() => {
+    const fetchAllProfile = async () => {
+        try {
+            const response = await axios.get("http://127.0.0.1:8000/api/all-profile", {
+                headers: { Authorization: `Bearer ${token}` },
+            });
+            setAllProfiles(response.data.data ?? []);
+        } catch (err) {
+            console.error("Error fetching profiles:", err);
+        }
+    };
+    fetchAllProfile();
+}, []); 
+
     return (
         <div className="flex space-x-5 overflow-x-auto pb-2 hide-scrollbar">
             {allprofiles.map((profile, index) => (

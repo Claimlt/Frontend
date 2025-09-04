@@ -1,4 +1,3 @@
-import { StrictMode } from "react";
 import "./App.css";
 import { AuthProvider } from "./Context/Authcontext.tsx";
 import AdminDashboard from "./Dashboards/AdminDashboards/AdminDashboard.tsx";
