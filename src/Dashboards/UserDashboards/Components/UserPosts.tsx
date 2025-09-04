@@ -48,9 +48,9 @@ function UserPosts() {
     };
     fetchPosts();
   }
-  
+
   const token = localStorage.getItem("token");
-  
+
   useEffect(() => {
     const fetchAllProfile = async () => {
       try {
@@ -98,7 +98,7 @@ function UserPosts() {
       </div>
     </div>
   );
-  
+
   if (posts.length === 0) return (
     <div className="max-w-2xl mx-auto px-4 py-8">
       <div className="bg-white rounded-2xl shadow-sm p-8 text-center border border-gray-100">
@@ -127,20 +127,20 @@ function UserPosts() {
               <div className="w-16 h-16 rounded-full border-2 border-[#3a63b8] p-0.5 mb-1.5">
                 <div className="w-full h-full rounded-full overflow-hidden bg-white">
                   <img
-                    src={profile.avatar?.url || "/default-avatar.png"} 
+                    src={profile.avatar?.url || "/default-avatar.png"}
                     alt="user profile"
                     className="w-full h-full object-cover rounded-full"
                   />
                 </div>
               </div>
               <span className="text-xs text-gray-700 font-medium truncate max-w-[64px]">
-                {profile.first_name} 
+                {profile.first_name}
               </span>
             </div>
           ))}
         </div>
-        
-        <div 
+
+        <div
           className="flex items-center space-x-3 p-3 bg-gray-50 rounded-xl cursor-pointer hover:bg-gray-100 transition-colors"
           onClick={openMakePostModal}
         >
@@ -166,14 +166,18 @@ function UserPosts() {
               <div className="w-10 h-10 rounded-full border border-[#1a2d57] p-0.5 flex-shrink-0">
                 <div className="w-full h-full rounded-full overflow-hidden bg-white">
                   <img
-                    src={"/pasindu.jpg"}
-                    alt="user profile"
+                    src={post.user.avatar?.url}
+                    alt={`${post.user.first_name} ${post.user.last_name}`}
                     className="w-full h-full object-cover"
                   />
+
                 </div>
               </div>
               <div>
-                <p className="font-medium text-gray-900">User Name</p>
+                <p className="font-medium text-gray-900">
+                  {post.user.first_name} {post.user.last_name}
+                </p>
+
                 <p className="text-xs text-gray-500">
                   {new Date(post.created_at).toLocaleString()}
                 </p>
@@ -200,7 +204,7 @@ function UserPosts() {
               </div>
             )}
           </div>
-          
+
           <div className="flex justify-between items-center pt-3">
             <div className="flex space-x-4">
               <button className="flex items-center space-x-1.5 text-gray-500 hover:text-red-500 transition-colors">
@@ -232,19 +236,19 @@ function UserPosts() {
           </div>
         </div>
       ))}
-      
+
       <ClaimModel
         postDetails={selectedPost as ClaimModalProps["postDetails"]}
         isOpen={claimModal}
         onClose={closeClaimModal}
       />
-      
+
       <MakePost
         isOpen={isMakePostOpen}
         onClose={closeMakePostModal}
         onPostCreated={handlePostCreated}
       />
-      
+
       <style>{`
         .hide-scrollbar {
           -ms-overflow-style: none;
