@@ -7,7 +7,7 @@ function ActiveUsers() {
     useEffect(() => {
         const fetchAllProfile = async () => {
             try {
-                const response = await axios.get("http://127.0.0.1:8000/api/all-profile", {
+                const response = await axios.get("http://127.0.0.1:8000/api/users", {
                     headers: { Authorization: `Bearer ${token}` },
                 });
                 const usersOnly = (response.data.data ?? []).filter(
