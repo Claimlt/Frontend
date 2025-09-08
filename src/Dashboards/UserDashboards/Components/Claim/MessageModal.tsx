@@ -21,25 +21,29 @@ const MessageModal = () => {
     }
   });
 
-  useEffect(() => {
-    const fetchClaims = async () => {
-      try {
-        setLoading(true);
-        setError(null);
-        const response = await api.get<ApiResponse>('/claims');
-        setClaims(response.data.data);
-      } catch (err) {
-        if (axios.isAxiosError(err)) {
-          setError(err.response?.data?.message || `Error: ${err.message}`);
-        } else {
-          setError('An unknown error occurred');
-        }
-        console.error('Error fetching claims:', err);
-      } finally {
-        setLoading(false);
+  const fetchClaims = async () => {
+    try {
+      setError(null);
+      const response = await api.get<ApiResponse>('/claims');
+      setClaims(response.data.data);
+    } catch (err) {
+      if (axios.isAxiosError(err)) {
+        setError(err.response?.data?.message || `Error: ${err.message}`);
+      } else {
+        setError('An unknown error occurred');
       }
-    };
+      console.error('Error fetching claims:', err);
+    } finally {
+      setLoading(false);
+    }
+  };
+  useEffect(() => {
+    fetchClaims();
+    const interval = setInterval(fetchClaims, 5000); 
+    return () => clearInterval(interval);
+  }, []);
 
+  useEffect(() => {
     if (isModalOpen) {
       fetchClaims();
     }
@@ -148,10 +152,12 @@ const MessageModal = () => {
 
                           {pendingClaims.map(claim => (
                             <PendingClaims
+                              key={claim.id}
                               claim={claim}
                               openClaim={openClaim}
                               formatDate={formatDate}
-                              getStatus={getStatus} />
+                              getStatus={getStatus}
+                            />
                           ))}
                         </>
                       )}
@@ -160,7 +166,6 @@ const MessageModal = () => {
                         formatDate={formatDate}
                         resolvedClaims={resolvedClaims}
                       />
-
                     </>
                   )}
                 </div>
