@@ -4,14 +4,11 @@ function SelectedClaim({
   selectedClaim,
   formatDate,
   getStatus,
-  onAccept,
-  onReject
+ 
 }: {
   selectedClaim: any,
   formatDate: (dateString: string) => string,
   getStatus: (claim: any) => string,
-  onAccept: () => void,
-  onReject: () => void
 }) {
   return (
     <div>
