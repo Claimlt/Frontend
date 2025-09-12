@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { useState, useEffect } from 'react';
-import { FaTimes,  FaEnvelope, FaArrowLeft} from 'react-icons/fa';
+import { FaTimes, FaEnvelope, FaArrowLeft } from 'react-icons/fa';
 import type { ApiResponse, Claim } from '../../../../../Utils/PropsInterface';
 import ResolveClaims from './ResolveClaims';
 import SelectedClaim from './SelectedClaim';
@@ -13,18 +13,15 @@ const MessageModal = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const api = axios.create({
-    baseURL: 'http://localhost:8000/api',
-    headers: {
-      'Authorization': `Bearer ${localStorage.getItem('token')}`,
-      'Content-Type': 'application/json',
-    }
-  });
 
   const fetchClaims = async () => {
     try {
       setError(null);
-      const response = await api.get<ApiResponse>('/my-claims');
+      const response = await axios.get<ApiResponse>('http://127.0.0.1:8000/api/my-claims',{
+        headers: {
+          Authorization:`Bearer ${localStorage.getItem('token')}`
+        }
+      });
       setClaims(response.data.data);
     } catch (err) {
       if (axios.isAxiosError(err)) {
@@ -37,17 +34,10 @@ const MessageModal = () => {
       setLoading(false);
     }
   };
-  useEffect(() => {
-    fetchClaims();
-    const interval = setInterval(fetchClaims, 5000); 
-    return () => clearInterval(interval);
-  }, []);
 
   useEffect(() => {
-    if (isModalOpen) {
-      fetchClaims();
-    }
-  }, [isModalOpen]);
+    fetchClaims();
+  }, []);
 
   const openClaim = (claim: Claim) => {
     setSelectedClaim(claim);
@@ -85,7 +75,7 @@ const MessageModal = () => {
       >
         <FaEnvelope className="text-xl" />
         {pendingClaims.length > 0 && (
-           <span className="absolute top-0 right-0 inline-flex items-center justify-center w-4 h-4 text-xs font-bold text-white bg-red-500 rounded-full">
+          <span className="absolute top-0 right-0 inline-flex items-center justify-center w-4 h-4 text-xs font-bold text-white bg-red-500 rounded-full">
             {pendingClaims.length}
           </span>
         )}
