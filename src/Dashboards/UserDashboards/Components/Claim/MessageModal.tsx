@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { useState, useEffect } from 'react';
-import { FaTimes, FaCheck, FaEllipsisV, FaEnvelope, FaArrowLeft, FaImage } from 'react-icons/fa';
+import { FaTimes,  FaEnvelope, FaArrowLeft} from 'react-icons/fa';
 import type { ApiResponse, Claim } from '../../../../../Utils/PropsInterface';
 import ResolveClaims from './ResolveClaims';
 import SelectedClaim from './SelectedClaim';
