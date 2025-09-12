@@ -24,7 +24,7 @@ const MessageModal = () => {
   const fetchClaims = async () => {
     try {
       setError(null);
-      const response = await api.get<ApiResponse>('/claims');
+      const response = await api.get<ApiResponse>('/my-claims');
       setClaims(response.data.data);
     } catch (err) {
       if (axios.isAxiosError(err)) {
@@ -85,7 +85,7 @@ const MessageModal = () => {
       >
         <FaEnvelope className="text-xl" />
         {pendingClaims.length > 0 && (
-          <span className="absolute top-0 right-0 inline-flex items-center justify-center px-1.5 py-0.5 text-xs font-bold leading-none text-white bg-red-600 rounded-full transform translate-x-1/2 -translate-y-1/2">
+           <span className="absolute top-0 right-0 inline-flex items-center justify-center w-4 h-4 text-xs font-bold text-white bg-red-500 rounded-full">
             {pendingClaims.length}
           </span>
         )}

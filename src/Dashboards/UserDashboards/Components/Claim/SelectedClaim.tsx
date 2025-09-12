@@ -1,15 +1,28 @@
+import axios from "axios";
 import { FaImage } from "react-icons/fa";
 
-function SelectedClaim({
-  selectedClaim,
-  formatDate,
-  getStatus,
- 
-}: {
-  selectedClaim: any,
-  formatDate: (dateString: string) => string,
-  getStatus: (claim: any) => string,
-}) {
+function SelectedClaim({ selectedClaim, formatDate, getStatus, }: { selectedClaim: any, formatDate: (dateString: string) => string, getStatus: (claim: any) => string, }) {
+
+  console.log('selected claim' ,selectedClaim);
+ const handleAccept = async () => {
+  try {
+    const response = await axios.post(
+      `http://localhost:8000/api/claims/${selectedClaim.id}/approve`,
+      {}, 
+      {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+          "Content-Type": "application/json",
+        },
+      }
+    );
+
+    console.log("Claim approved:", response.data);
+  } catch (error) {
+    console.error("Error approving claim:", error);
+  }
+};
+
   return (
     <div>
       <div className="space-y-6">
@@ -76,6 +89,7 @@ function SelectedClaim({
             Reject Claim
           </button>
           <button
+            onClick={handleAccept}
             className="px-6 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors font-medium"
           >
             Accept Claim

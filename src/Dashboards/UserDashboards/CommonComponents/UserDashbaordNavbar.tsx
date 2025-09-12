@@ -6,7 +6,7 @@ import {
   FaSearch,
   FaUser,
   FaCog,
-  FaSignOutAlt,
+  FaSignOutAlt, FaCheckCircle,
   FaChevronDown,
 } from "react-icons/fa";
 import { Link } from "react-router-dom";
@@ -15,6 +15,8 @@ import { useProfile } from "../../../Context/ProfileContext";
 import MakePost from "./MakePost";
 import axios from "axios";
 import MessageModal from "../Components/Claim/MessageModal.tsx";
+import ClaimRequestChecking from "../Components/Claim/ClaimRequestChecking.tsx";
+
 
 function Navbar() {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
@@ -84,7 +86,7 @@ function Navbar() {
             <FaHome className="text-xl" />
           </button>
           <MessageModal />
-
+          <ClaimRequestChecking/>
           <button
             onClick={handleModelOpen}
             className="relative p-2 hover:bg-[#2c4a8a] rounded-lg"
@@ -99,6 +101,7 @@ function Navbar() {
             <Link to="user-posts">
               <FaRegNewspaper className="text-xl" />
             </Link>
+
           </button>
 
           <div className="relative" ref={dropdownRef}>
@@ -139,9 +142,8 @@ function Navbar() {
                   </div>
                 )}
                 <FaChevronDown
-                  className={`text-xs transition-transform ${
-                    isDropdownOpen ? "rotate-180" : ""
-                  }`}
+                  className={`text-xs transition-transform ${isDropdownOpen ? "rotate-180" : ""
+                    }`}
                 />
               </div>
             </button>
