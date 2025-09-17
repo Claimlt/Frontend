@@ -1,27 +1,26 @@
 import axios from "axios";
 import { FaImage } from "react-icons/fa";
 
-function SelectedClaim({ selectedClaim, formatDate, getStatus, }: { selectedClaim: any, formatDate: (dateString: string) => string, getStatus: (claim: any) => string, }) {
+function SelectedClaim({ selectedClaim, formatDate, getStatus, onClose, }: { selectedClaim: any, formatDate: (dateString: string) => string, getStatus: (claim: any) => string, onClose: () => void; }) {
 
-  console.log('selected claim' ,selectedClaim);
- const handleAccept = async () => {
-  try {
-    const response = await axios.post(
-      `http://localhost:8000/api/claims/${selectedClaim.id}/approve`,
-      {}, 
-      {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-          "Content-Type": "application/json",
-        },
-      }
-    );
-
-    console.log("Claim approved:", response.data);
-  } catch (error) {
-    console.error("Error approving claim:", error);
-  }
-};
+  const handleAccept = async () => {
+    try {
+      const response = await axios.post(
+        `http://localhost:8000/api/claims/${selectedClaim.id}/approve`,
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      console.log("Claim approved:", response.data);
+      onClose();
+    } catch (error) {
+      console.error("Error approving claim:", error);
+    }
+  };
 
   return (
     <div>

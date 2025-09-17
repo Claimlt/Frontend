@@ -219,6 +219,7 @@ const MessageModal = () => {
                   selectedClaim={selectedClaim}
                   formatDate={formatDate}
                   getStatus={getStatus}
+                  onClose={closeClaim}
                 />
               ) : selectedPostId ? (
                 <div className="space-y-4">
