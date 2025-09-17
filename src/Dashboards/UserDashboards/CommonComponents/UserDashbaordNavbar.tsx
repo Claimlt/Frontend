@@ -1,13 +1,12 @@
 import { useState, useRef } from "react";
 import {
   FaHome,
-  FaEnvelope,
   FaPlus,
   FaRegNewspaper,
   FaSearch,
   FaUser,
   FaCog,
-  FaSignOutAlt,
+  FaSignOutAlt, FaCheckCircle,
   FaChevronDown,
 } from "react-icons/fa";
 import { Link } from "react-router-dom";
@@ -15,6 +14,9 @@ import { useAuth } from "../../../Context/Authcontext";
 import { useProfile } from "../../../Context/ProfileContext";
 import MakePost from "./MakePost";
 import axios from "axios";
+import MessageModal from "../Components/Claim/MessageModal.tsx";
+import ClaimRequestChecking from "../Components/Claim/ClaimRequestChecking.tsx";
+
 
 function Navbar() {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
@@ -23,7 +25,7 @@ function Navbar() {
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   const { user } = useAuth();
-  const { profileData, loading, error } = useProfile();
+  const { profileData, loading } = useProfile();
   const storedName = localStorage.getItem("user");
 
   const handleSignOut = async () => {
@@ -33,7 +35,7 @@ function Navbar() {
         {},
         {
           headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-        }
+        },
       );
       localStorage.removeItem("token");
       window.location.href = "/";
@@ -77,12 +79,14 @@ function Navbar() {
         </div>
 
         <div className="flex items-center space-x-5">
-          <button className="relative p-2 hover:bg-[#2c4a8a] rounded-lg" title="Home">
+          <button
+            className="relative p-2 hover:bg-[#2c4a8a] rounded-lg"
+            title="Home"
+          >
             <FaHome className="text-xl" />
           </button>
-          <button className="relative p-2 hover:bg-[#2c4a8a] rounded-lg" title="Messages">
-            <FaEnvelope className="text-xl" />
-          </button>
+          <MessageModal />
+          <ClaimRequestChecking/>
           <button
             onClick={handleModelOpen}
             className="relative p-2 hover:bg-[#2c4a8a] rounded-lg"
@@ -90,10 +94,14 @@ function Navbar() {
           >
             <FaPlus className="text-xl" />
           </button>
-          <button className="relative p-2 hover:bg-[#2c4a8a] rounded-lg" title="My Posts">
+          <button
+            className="relative p-2 hover:bg-[#2c4a8a] rounded-lg"
+            title="My Posts"
+          >
             <Link to="user-posts">
               <FaRegNewspaper className="text-xl" />
             </Link>
+
           </button>
 
           <div className="relative" ref={dropdownRef}>
@@ -134,9 +142,8 @@ function Navbar() {
                   </div>
                 )}
                 <FaChevronDown
-                  className={`text-xs transition-transform ${
-                    isDropdownOpen ? "rotate-180" : ""
-                  }`}
+                  className={`text-xs transition-transform ${isDropdownOpen ? "rotate-180" : ""
+                    }`}
                 />
               </div>
             </button>
@@ -204,7 +211,11 @@ function Navbar() {
             )}
           </div>
 
-          <MakePost isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
+          <MakePost
+            isOpen={isModalOpen}
+            onClose={() => setIsModalOpen(false)}
+          />
+
         </div>
       </div>
     </nav>

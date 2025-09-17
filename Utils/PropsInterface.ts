@@ -114,3 +114,22 @@ export interface ProfileData {
   updated_at: string;
   avatar: Avatar | null;
 }
+export interface Claim {
+  id: string;
+  message: string;
+  approved_at: string | null;
+  approver_id: string | null;
+  user: User;
+  created_at: string;
+  updated_at: string;
+  images: Image[];
+}
+
+export interface ApiResponse {
+  data: Claim[];
+}
+export interface ResolveClaimsProps {
+  resolvedClaims: any[];
+  openClaim: (claim: any) => void;
+  formatDate: (dateString: string) => string;
+}
