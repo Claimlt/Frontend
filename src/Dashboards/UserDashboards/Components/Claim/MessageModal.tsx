@@ -1,7 +1,7 @@
 import axios from 'axios';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { FaTimes, FaEnvelope, FaArrowLeft, FaEye } from 'react-icons/fa';
-import type {  ApiResponse, Claim, Post } from '../../../../../Utils/PropsInterface';
+import type { ApiResponse, Claim, Post } from '../../../../../Utils/PropsInterface';
 import ResolveClaims from './ResolveClaims';
 import SelectedClaim from './SelectedClaim';
 import PendingClaims from './PendingClaims';
@@ -15,16 +15,50 @@ const MessageModal = () => {
   const [error, setError] = useState<string | null>(null);
   const [selectedPostId, setSelectedPostId] = useState<string | null>(null);
   const [claimsLoading, setClaimsLoading] = useState(false);
+  const [pendingClaimsCount, setPendingClaimsCount] = useState(0);
+  const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
-  const fetchPosts = async () => {
+  const fetchAllPendingClaims = async () => {
     try {
-      setError(null);
-      const response = await axios.get<{ data: Post[] }>('http://127.0.0.1:8000/api/my-posts', {
+      const postsResponse = await axios.get<{ data: Post[] }>('http://127.0.0.1:8000/api/my-posts', {
         headers: {
           Authorization: `Bearer ${localStorage.getItem('token')}`
         }
       });
-      setPosts(response.data.data);
+      
+      let totalPendingClaims = 0;
+      for (const post of postsResponse.data.data) {
+        try {
+          const claimsResponse = await axios.get<ApiResponse>(
+            `http://127.0.0.1:8000/api/posts/${post.id}/claims`, 
+            {
+              headers: {
+                Authorization: `Bearer ${localStorage.getItem('token')}`
+              }
+            }
+          );
+          
+          const pendingClaims = claimsResponse.data.data.filter(claim => !claim.approved_at);
+          totalPendingClaims += pendingClaims.length;
+        } catch (err) {
+          console.error(`Error fetching claims for post ${post.id}:`, err);
+        }
+      }
+      
+      setPendingClaimsCount(totalPendingClaims);
+      return postsResponse.data.data;
+    } catch (err) {
+      console.error('Error fetching pending claims count:', err);
+      return [];
+    }
+  };
+
+  const fetchPosts = async () => {
+    try {
+      setError(null);
+      setLoading(true);
+      const posts = await fetchAllPendingClaims();
+      setPosts(posts);
     } catch (err) {
       if (axios.isAxiosError(err)) {
         setError(err.response?.data?.message || `Error: ${err.message}`);
@@ -67,8 +101,27 @@ const MessageModal = () => {
   };
 
   useEffect(() => {
+    fetchAllPendingClaims();
+  intervalRef.current = setInterval(fetchAllPendingClaims, 30000);
+    return () => {
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current);
+      }
+    };
+  }, []);
+
+  useEffect(() => {
     if (isModalOpen) {
       fetchPosts();
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current);
+      }
+      intervalRef.current = setInterval(fetchAllPendingClaims, 10000);
+    } else {
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current);
+      }
+      intervalRef.current = setInterval(fetchAllPendingClaims, 30000);
     }
   }, [isModalOpen]);
 
@@ -107,9 +160,9 @@ const MessageModal = () => {
         title="Messages"
       >
         <FaEnvelope className="text-xl" />
-        {posts.length > 0 && (
+        {pendingClaimsCount > 0 && ( 
           <span className="absolute top-0 right-0 inline-flex items-center justify-center w-4 h-4 text-xs font-bold text-white bg-red-500 rounded-full">
-            {posts.length}
+            {pendingClaimsCount > 99 ? '99+' : pendingClaimsCount}
           </span>
         )}
       </button>
@@ -270,7 +323,7 @@ const MessageModal = () => {
               ) : (
                 <div className="flex justify-between items-center">
                   <span className="text-sm text-gray-500">
-                    {posts.length} posts
+                    {posts.length} posts, {pendingClaimsCount} pending claims
                   </span>
                   <button
                     onClick={() => setIsModalOpen(false)}
