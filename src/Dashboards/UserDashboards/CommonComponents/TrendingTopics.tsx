@@ -20,45 +20,37 @@ function TrendingTopics() {
   const [topics, setTopics] = useState<TrendingTopic[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => {
-    const fetchTrendingTopics = async () => {
-      try {
-        const token = localStorage.getItem("token");
-        if (!token) {
-          setError("Authentication required");
-          setLoading(false);
-          return;
-        }
-
-        const response = await axios.get("", {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-
-        const posts: Post[] = response.data.data || [];
-        extractTrendingTopics(posts);
-      } catch (err: any) {
-        console.error("Error fetching posts:", err);
-        setError(err.response?.data?.message || "Failed to fetch trending topics");
-      } finally {
+  
+useEffect(() => {
+  const fetchTrendingTopics = async () => {
+    try {
+      const token = localStorage.getItem("token");
+      if (!token) {
+        setError("Authentication required");
         setLoading(false);
+        return;
       }
-    };
 
-    fetchTrendingTopics();
-  }, []);
+      const response = await axios.get("http://127.0.0.1:8000/api/trending-titles", {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      setTopics(response.data.data || []);
+    } catch (err: any) {
+      console.error("Error fetching trending titles:", err);
+      setError(err.response?.data?.message || "Failed to fetch trending titles");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  fetchTrendingTopics();
+}, []);
 
   const extractTrendingTopics = (posts: Post[]) => {
     const hashtagCount: Record<string, number> = {};
     
-    const defaultTopics = [
-      { tag: "#LostPhone", count: 125 },
-      { tag: "#FoundWallet", count: 89 },
-      { tag: "#MissingBook", count: 67 }
-    ];
-    
+ 
     let foundHashtags = false;
     
     posts.forEach(post => {
@@ -84,7 +76,7 @@ function TrendingTopics() {
 
       setTopics(trendingTopics);
     } else {
-      setTopics(defaultTopics);
+    
     }
   };
 
