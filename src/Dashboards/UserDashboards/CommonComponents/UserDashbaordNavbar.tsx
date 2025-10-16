@@ -86,7 +86,7 @@ function Navbar() {
             <FaHome className="text-xl" />
           </button>
           <MessageModal />
-          <ClaimRequestChecking/>
+          <ClaimRequestChecking />
           <button
             onClick={handleModelOpen}
             className="relative p-2 hover:bg-[#2c4a8a] rounded-lg"
@@ -153,20 +153,7 @@ function Navbar() {
                 <div className="px-4 py-3 border-b border-gray-700">
                   {displayUser && (
                     <div className="flex items-center space-x-3">
-                      <div className="w-8 h-8 rounded-full overflow-hidden border-2 border-[#3a63b8]">
-                        {displayAvatar && !avatarError ? (
-                          <img
-                            src={displayAvatar.url}
-                            alt="Profile"
-                            className="w-full h-full object-cover"
-                            onError={handleImageError}
-                          />
-                        ) : (
-                          <div className="w-full h-full bg-gray-600 flex items-center justify-center">
-                            <FaUser className="text-white" />
-                          </div>
-                        )}
-                      </div>
+                      
                       <div className="flex flex-col">
                         <span className="text-sm font-medium">
                           {displayUser.first_name} {displayUser.last_name}
@@ -180,14 +167,6 @@ function Navbar() {
                 </div>
 
                 <div className="py-2">
-                  <Link
-                    to="/profile"
-                    className="flex items-center px-4 py-2 text-sm text-white hover:bg-[#3a63b8]"
-                    onClick={() => setIsDropdownOpen(false)}
-                  >
-                    <FaUser className="mr-3 text-gray-300" />
-                    Profile
-                  </Link>
                   <Link
                     to="settings"
                     className="flex items-center px-4 py-2 text-sm text-white hover:bg-[#3a63b8]"
